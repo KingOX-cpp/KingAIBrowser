@@ -1,5 +1,7 @@
 # KingAI Go SDK
 
+完整环境、DOM、输入和点击示例：[workflow/main.go](examples/workflow/main.go)，运行说明见[示例导航](../examples/README.md)。
+
 Go 1.24+，module 为 `github.com/KingOX-cpp/KingAIBrowser/go`，使用官方 MCP Go SDK v1.4.0。module 对应本仓库的 go 子目录，尚未发布版本标签，可先通过本地 replace 使用。已纳入 go.sum；源 SDK 的 3 项模拟 MCP 测试此前通过，本仓库调整后未重新测试。入口及复跑方法见 [SAMPLES](../SAMPLES.md)。
 
 ```go

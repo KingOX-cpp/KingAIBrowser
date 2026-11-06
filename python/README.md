@@ -4,6 +4,9 @@ Requires Python 3.10+ and a compatible, installed KingAI MCP/Runtime/browser.
 This package does not download a browser or expose CDP/HTTP. All quota and
 humanization decisions remain in the existing account/Runtime/browser layers.
 
+Complete environment/DOM/input/click workflow: [examples/workflow.py](examples/workflow.py).
+See the [shared playground and run instructions](../examples/README.md) first.
+
 ```python
 from kingai_browser import KingAI
 

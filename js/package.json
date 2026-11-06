@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "description": "KingAI managed browser code SDK over stdio MCP",
   "homepage": "https://www.kingaibrowser.cn",
-  "repository": { "type": "git", "url": "https://github.com/KingOX-cpp/KingAIBrowser.git" },
+  "repository": { "type": "git", "url": "https://github.com/KingOX-cpp/KingAIBrowser.git", "directory": "js" },
   "bugs": { "url": "https://github.com/KingOX-cpp/KingAIBrowser/issues" },
   "keywords": ["kingai", "browser", "fingerprint", "mcp", "ai-agent", "automation", "stdio"],
   "license": "MIT",

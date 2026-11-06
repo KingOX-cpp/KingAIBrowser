@@ -1,5 +1,7 @@
 # KingAI Java SDK
 
+完整环境、DOM、输入和点击示例：[Workflow.java](src/main/java/cn/kingaibrowser/sdk/samples/Workflow.java)，运行说明见[示例导航](../examples/README.md)。
+
 Java 17+，Maven 模块，版本 0.3.0。该库直接使用 JSON-RPC/stdin/stdout 连接已安装 KingAI MCP；不需要 Python、Node.js 或 HTTP 服务。JSON 编解码使用 Jackson。sample 与 3 项测试已在模拟 MCP 下通过，入口及复跑方法见 [SAMPLES](../SAMPLES.md)。
 
 ```java

@@ -41,8 +41,7 @@ try {
     Invoke-SampleTestCommand 'python' @('-m','unittest','discover','-s',(Join-Path $sourceRoot 'python\tests'),'-v')
 
     $nodeRoot=Join-Path $run 'node'; [void][System.IO.Directory]::CreateDirectory($nodeRoot)
-    Get-ChildItem -LiteralPath $sourceRoot -File | Where-Object { $_.Extension -in @('.mjs','.json','.ts') } | Copy-Item -Destination $nodeRoot
-    foreach ($directory in @('examples','tests')) { Copy-Item -LiteralPath (Join-Path $sourceRoot $directory) -Destination $nodeRoot -Recurse }
+    Get-ChildItem -LiteralPath (Join-Path $sourceRoot 'js') | Copy-Item -Destination $nodeRoot -Recurse
     Push-Location $nodeRoot
     try {
         Invoke-SampleTestCommand 'npm.cmd' @('install','--package-lock=false','--ignore-scripts','--no-audit','--no-fund','--registry','https://registry.npmjs.org','--cache',(Join-Path $root 'npm-cache'))

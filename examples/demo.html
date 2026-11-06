@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KingAI SDK Playground</title>
+<style>
+body{font:18px system-ui;max-width:680px;margin:48px auto;padding:0 24px;background:#faf9f6;color:#222}
+label{display:block;margin-top:20px}input,textarea,button{font:inherit;padding:12px;box-sizing:border-box;width:100%}
+button{margin-top:24px;cursor:pointer}#result{padding:16px;background:#e8f0e8;white-space:pre-wrap}
+</style>
+<h1>KingAI SDK Playground</h1>
+<p>A local form for SDK navigation, DOM queries, typing and clicking. No external requests, accounts or submissions.</p>
+<form id="demo-form">
+  <label for="name">Name</label><input id="name" name="name" autocomplete="off" required>
+  <label for="message">Message</label><textarea id="message" name="message" required></textarea>
+  <button id="submit" type="submit">Submit demo</button>
+</form>
+<h2>Submission result</h2><pre id="result" role="status">Not submitted</pre>
+<script>
+document.querySelector('#demo-form').addEventListener('submit', event => {
+  event.preventDefault();
+  const name = document.querySelector('#name').value;
+  const message = document.querySelector('#message').value;
+  document.querySelector('#result').textContent = 'Submitted: ' + name + ' | ' + message;
+  document.querySelector('#result').dataset.submitted = 'true';
+});
+</script>
+</html>

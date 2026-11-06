@@ -65,6 +65,16 @@ cd D:\code\KingAIBrowser
 
 Discovery: explicit SDK option → `KINGAI_MCP_EXECUTABLE` → per-user Manager record. No disk scanning or automatic browser download. The sample runner targets Windows; other platform paths in the SDK are not proof of tested browser availability.
 
+## Complete automation examples
+
+Start with [complete workflows](examples/README.md): environment listing, creation and settings → DOM observation → element queries → input → click → submission-result confirmation. A shared local form is included, so these samples do not depend on a third-party website.
+
+| Python | Node.js | Java | Go |
+| --- | --- | --- | --- |
+| [workflow.py](python/examples/workflow.py) | [workflow.mjs](js/examples/workflow.mjs) | [Workflow.java](java/src/main/java/cn/kingaibrowser/sdk/samples/Workflow.java) | [main.go](go/examples/workflow/main.go) |
+
+SDK code is organized by language in `python/`, `js/`, `java/` and `go/`. `examples/` contains the shared playground and example guide. The snippets below are minimal entry points; use the workflows above for complete interaction examples.
+
 ## Python
 
 Python 3.10+; runtime library uses only the standard library.
@@ -74,7 +84,7 @@ New-Item -ItemType Directory -Force D:\code\kingai-sdk-temp | Out-Null
 $env:TEMP = 'D:\code\kingai-sdk-temp'
 $env:TMP = $env:TEMP
 python -m pip install --cache-dir D:\code\kingai-sdk-cache\pip .\python
-python .\examples\sync.py --live
+python .\python\examples\sync.py --live
 ```
 
 ```python
@@ -89,14 +99,14 @@ with KingAI() as api:
     browser.detach()
 ```
 
-Also includes `AsyncKingAI` and the `BrowserAutomation` agent facade. [Python docs](python/README.md) · [sync sample](examples/sync.py) · [async sample](examples/async.py).
+Also includes `AsyncKingAI` and the `BrowserAutomation` agent facade. [Python docs](python/README.md) · [sync sample](python/examples/sync.py) · [async sample](python/examples/async.py).
 
 ## Node.js / TypeScript
 
 Node.js 22+. Install the local package from your application directory:
 
 ```powershell
-npm install --cache D:\code\kingai-sdk-cache\npm D:\code\KingAIBrowser
+npm install --cache D:\code\kingai-sdk-cache\npm D:\code\KingAIBrowser\js
 ```
 
 ```javascript
@@ -113,7 +123,7 @@ try {
 } finally { await api.close(); }
 ```
 
-TypeScript declarations are included. To run the [repository sample](examples/node.mjs), install dependencies in the repository with `npm install --cache D:\code\kingai-sdk-cache\npm`, then run `node examples/node.mjs --live`.
+TypeScript declarations are included. To run the [repository sample](js/examples/node.mjs), install dependencies in js/ with `npm install --cache D:\code\kingai-sdk-cache\npm`, then run `node examples/node.mjs --live` from js/.
 
 ## Java
 
@@ -189,7 +199,7 @@ Example prompt: “Open my saved Research profile, visit example.com and read th
 
 ## Samples and tests
 
-Samples and tests call the same reusable sample functions. Real CLI use requires `--live`; samples create saved profiles and detach, leaving browser windows open. Repeated use of the same name can return a duplicate-name error. The async sample uses the existing default profile.
+The earlier minimal samples and fixture tests call the same reusable functions. The new complete workflows are separate live examples and have not been tested in this task. Real CLI use requires `--live`; saved-profile samples detach and leave windows open. The minimal samples can return duplicate-name errors; complete workflows generate unique environment names. The minimal async sample uses the existing default profile.
 
 The source SDK's previous Windows run passed **17 fixture-backed tests**: Python 7, Node.js 4, Java 3, Go 3. These exercise SDK stdio communication with an in-memory MCP simulator, sample sequences, selected CRUD errors, no automatic replay, observation locking and preview bounds. **This public-repository layout and updated Go module path have not been retested.** These tests do not validate real browsing, fingerprint detection or account entitlements.
 

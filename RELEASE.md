@@ -9,7 +9,7 @@ SDK version: **0.3.0**. API contract: **1**. This repository publishes source co
 | SDK | Source location | Package identity | Distribution status |
 | --- | --- | --- | --- |
 | Python | python/ | kingai-browser | Source install; no PyPI release |
-| Node.js / TypeScript | repository root | @kingai/browser-api | Local package install; no npm release |
+| Node.js / TypeScript | js/ | @kingai/browser-api | Local package install; no npm release |
 | Java | java/ | cn.kingaibrowser.sdk:kingai-browser:0.3.0 | Local Maven install; no Maven Central release |
 | Go | go/ | github.com/KingOX-cpp/KingAIBrowser/go | Local replace supported; no version tag claimed |
 
@@ -29,6 +29,6 @@ This repository does not provide instructions to build private Chromium/Runtime 
 
 ## Test evidence and remaining work
 
-The original source SDK passed 17 tests against an in-memory MCP fixture on Windows on 2026-11-06. They cover samples and selected SDK semantics. Public repository packaging and Go module-path changes have not been retested; package installation and real-browser behavior are not covered by that result.
+The original source SDK passed 17 tests against an in-memory MCP fixture on Windows on 2026-11-06. They cover minimal samples and selected SDK semantics. Public repository packaging, Go module-path changes, the js/ reorganization and new complete workflows have not been retested; package installation and real-browser behavior are not covered by that result.
 
 Before a public package release, separately validate package contents/installability, runtime resource loading, supported operating systems, real MCP/Runtime compatibility, normal and abnormal process exit, account authorization and concurrency, humanize entitlement, page visibility, window-synchronization contention and browser input behavior. No compilation, build, check or test was run during this repository preparation task.

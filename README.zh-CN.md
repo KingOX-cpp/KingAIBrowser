@@ -65,6 +65,16 @@ cd D:\code\KingAIBrowser
 
 定位优先级：SDK 显式参数 → `KINGAI_MCP_EXECUTABLE` → 管理器安装登记。SDK 不扫描磁盘、不自动下载浏览器。目前示例测试脚本面向 Windows；源码中的其他平台路径不代表对应浏览器发行版已经验证。
 
+## 完整自动化示例
+
+推荐先看[完整流程与运行说明](examples/README.md)：获取环境列表、创建和设置环境 → 获取 DOM → 查询元素 → 输入 → 点击 → 确认提交结果。仓库附带本地演示表单，不依赖第三方网站。
+
+| Python | Node.js | Java | Go |
+| --- | --- | --- | --- |
+| [workflow.py](python/examples/workflow.py) | [workflow.mjs](js/examples/workflow.mjs) | [Workflow.java](java/src/main/java/cn/kingaibrowser/sdk/samples/Workflow.java) | [main.go](go/examples/workflow/main.go) |
+
+SDK 分别放在 `python/`、`js/`、`java/`、`go/`。根目录的 `examples/` 提供公共演示页面和导航。下方片段用于快速入门，完整交互请看上面的 workflow 示例。
+
 ## Python
 
 要求 Python 3.10+，运行时仅使用 Python 标准库。
@@ -74,7 +84,7 @@ New-Item -ItemType Directory -Force D:\code\kingai-sdk-temp | Out-Null
 $env:TEMP = 'D:\code\kingai-sdk-temp'
 $env:TMP = $env:TEMP
 python -m pip install --cache-dir D:\code\kingai-sdk-cache\pip .\python
-python .\examples\sync.py --live
+python .\python\examples\sync.py --live
 ```
 
 ```python
@@ -89,14 +99,14 @@ with KingAI() as api:
     browser.detach()                        # 结束会话，保留浏览器
 ```
 
-同时提供 `AsyncKingAI` 异步入口与 `BrowserAutomation` Agent 封装。[Python 说明](python/README.md) · [同步 sample](examples/sync.py) · [异步 sample](examples/async.py)。
+同时提供 `AsyncKingAI` 异步入口与 `BrowserAutomation` Agent 封装。[Python 说明](python/README.md) · [同步 sample](python/examples/sync.py) · [异步 sample](python/examples/async.py)。
 
 ## Node.js / TypeScript
 
 要求 Node.js 22+。在自己的调用项目中安装本地源码包：
 
 ```powershell
-npm install --cache D:\code\kingai-sdk-cache\npm D:\code\KingAIBrowser
+npm install --cache D:\code\kingai-sdk-cache\npm D:\code\KingAIBrowser\js
 ```
 
 ```javascript
@@ -113,7 +123,7 @@ try {
 } finally { await api.close(); }
 ```
 
-提供 TypeScript 类型声明。运行[仓库 sample](examples/node.mjs)前，在仓库目录执行 `npm install --cache D:\code\kingai-sdk-cache\npm`，然后执行 `node examples/node.mjs --live`。
+提供 TypeScript 类型声明。运行[仓库 sample](js/examples/node.mjs)前，在 js/ 目录执行 `npm install --cache D:\code\kingai-sdk-cache\npm`，然后在 js/ 目录执行 `node examples/node.mjs --live`。
 
 ## Java
 
@@ -189,7 +199,7 @@ return err
 
 ## Sample 与测试
 
-示例命令和测试调用同一个可复用 sample 函数。真实运行必须明确传入 `--live`；同步示例会创建持久环境并在结束时 detach，窗口保留。同名环境重复运行可能报重名错误；异步示例使用已保存默认环境。
+原有最小示例和模拟测试调用同一组可复用 sample 函数；新增完整 workflow 是独立实机示例，本轮未测试。真实运行必须明确传入 `--live`，保存环境示例结束时 detach，窗口保留。原有最小示例重复运行可能报重名错误；完整 workflow 生成唯一环境名。最小异步示例使用已保存默认环境。
 
 源 SDK 此前在 Windows 下通过 **17 项模拟 MCP 测试**：Python 7、Node.js 4、Java 3、Go 3，覆盖 stdio 通信、sample 流程、部分 CRUD 错误、不自动重放、操作与观察锁、预览大小控制。**本次公开仓库整理和 Go module 路径调整后未重新运行测试。** 这些测试不证明真实网页、指纹检测或会员票据已验证。
 
