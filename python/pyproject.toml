@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kingai-browser"
+version = "0.3.0"
+description = "Python code API for the installed KingAI stdio MCP server"
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+dependencies = []
+
+[project.urls]
+Homepage = "https://www.kingaibrowser.cn"
+Repository = "https://github.com/KingOX-cpp/KingAIBrowser"
+Issues = "https://github.com/KingOX-cpp/KingAIBrowser/issues"
+
+[tool.setuptools]
+py-modules = ["kingai_browser", "_kingai_stdio", "_kingai_discovery", "_kingai_automation", "_kingai_async"]
+
+[project.scripts]
+kingai-browser = "kingai_browser:main"
+

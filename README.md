@@ -1,88 +1,218 @@
-# KingAIBrowser：自己开发了一个网站视频录制的浏览器
+<div align="center">
+  <img src="images/new-logo.png" width="80" alt="KingAI Browser" />
+  <h1>KingAI Browser</h1>
+  <p><strong>Isolated fingerprint environments. AI agents that operate your browser.</strong></p>
+  <p>Python · Node.js / TypeScript · Java · Go · Agent MCP</p>
+  <p><a href="README.zh-CN.md">简体中文</a> | English | <a href="https://www.kingaibrowser.cn/">Official Website & Download</a> | <a href="https://kingaibrowser.ccwu.cc/">Alternative Website</a> | <a href="https://www.kingaibrowser.cn/help/en/">Help</a></p>
+</div>
 
-> 作者：KingAI浏览器  
-> 发布时间：2026年07月12日  
-> 来源：[Bilibili](https://www.bilibili.com/opus/1224055607674273798)
+KingAI Browser combines persistent fingerprint profiles, Chromium/Blink source-level modifications and browser-native automation. AI agents use its **stdio MCP server**; applications use the **four SDKs in this repository**. Both paths share the installed MCP, Runtime and browser execution layer.
 
----
+**SDK 0.3.0 · BSD-3-Clause · No Playwright dependency · No HTTP service required**
 
-UP主自主开发的 KingAI 浏览器，其核心功能是将网页视频与直播录制能力直接集成到浏览器中。在普通视频网站和直播页面右上角点击录制、自动保存至本地安装目录下的 `video_record` 目录、停止后即时回放的全流程。该工具仅限个人学习使用，明确禁止用于盗版传播，对于腾讯、爱奇艺等强版权保护平台不支持录制。
+This repository contains open-source client SDKs, samples and tests. Install KingAI Browser separately from the [official website](https://www.kingaibrowser.cn/) or [alternative website](https://kingaibrowser.ccwu.cc/). Browser binaries, Manager, MCP/Runtime executables and Chromium patches are distributed separately and are not licensed by this repository's SDK license. PyPI/npm/Maven packages have not been published; use source installation below.
 
----
+![KingAI fingerprint environment manager](images/manager-dashboard.png)
 
-为了方便学习，可以把视频下载到本地，本人基于 Chromium 151 版本，开发了一个网站视频录制工具，基本适用于常见网站视频及直播，均可录制到本地。与录屏软件原理类似，只是我集成到浏览器了。非常适合自媒体找素材。**只限于学习使用，不要用于视频盗版传播，由此带来的法律问题，由个人承担。**
+## Fingerprint environments + AI automation
 
----
+| Capability | What it provides |
+| --- | --- |
+| Persistent fingerprint profiles | Each UUID profile has its own browser data, cookies, cache, proxy configuration and fingerprint noise key. Reuse a saved identity across sessions. |
+| Chromium / Blink modifications | Engine-level handling of UA / Client Hints, Canvas, Audio, ClientRects, fonts, WebRTC, WebGL / WebGPU and hardware-related surfaces. |
+| Configuration consistency | Coordinates language, timezone, proxy region and hardware/graphics information, with startup validation of conflicting settings. |
+| Browser-native humanize | Mouse trajectories, keyboard timing and scrolling in the browser input layer, including button/pressure handling. Requires account entitlement. |
+| Agent MCP | Open profiles, inspect pages, click, type, navigate, manage tabs and exchange structured results through stdio MCP. |
+| Reusable Skills | Record workflows in the browser; agents discover parameters, start playback, query status or cancel through MCP. |
+| Four SDKs | Python, Node.js/TypeScript, Java and Go invoke the same MCP tools. |
 
-## 1. 录制功能演示
+The browser also includes multi-window synchronization and Skill debugging. Availability follows the installed version and account entitlement. See [browser technology](BROWSER_TECHNOLOGY.md).
 
-- 直播页面右上角提供"录制"按钮，点击即可启动录制。
-- 开始录制后，视频文件立即生成并保存至本地目录。
+## Automation signals and CDP detection
 
-![录制按钮与开始录制](images/img-01.jpg)
+KingAI addresses automation detection inside Chromium/Blink and the browser input layer, including `navigator.webdriver` and button/pressure data in automated mouse events. Agents connect through **managed MCP tools** without requesting a DevTools port or debugger WebSocket URL.
 
-- 点击"停止"后可直接播放已录制的视频，验证录制成功。
+The SDK does not expose unrestricted raw CDP or require Playwright/Puppeteer. Internal execution can still use protected Chromium interfaces; stdio alone does not remove automation signals. These modifications aim to reduce detectable automation differences, **not guarantee acceptance by every site**. IP reputation, account history, behavior and changing website rules also matter.
 
-![停止录制与回放](images/img-02.jpg)
+## Architecture
 
----
+```text
+AI agent ──────────────────────────┐
+                                  ▼
+Python / Node.js / Java / Go → installed KingAI MCP (stdio)
+                                  │ authenticated IPC
+                                  ▼
+                              KingAI Runtime
+                                  │
+                                  ▼
+                    KingAI Browser + saved profile
+```
 
-## 2. 浏览器介绍与安装说明
+Each SDK owns its MCP child-process connection. No SDK HTTP daemon is needed. Runtime manages browser execution and account/profile access. Complete fingerprint configurations stay in the browser system.
 
-- 这是一款由 UP 主自研的专用视频录制浏览器，基于 Chromium 151 最新内核开发。
+## Before you start
 
-![浏览器介绍](images/img-03.jpg)
+1. Install KingAI Browser and sign in through its Manager. MCP/Runtime must support the tools required by SDK 0.3.0; SDK installation alone does not upgrade them.
+2. Locate **KingAIMcpServer.exe**, with **KingAIRuntime.exe** beside it. The main browser executable is not the MCP server.
+3. Set the path below, or use the installation record written by a compatible Manager. The Manager need not stay open just for path discovery.
 
-- 安装过程为标准向导式，需阅读并同意版权说明，明确禁止用于盗版传播。
+```powershell
+# Replace the example path with your installed MCP executable.
+$env:KINGAI_MCP_EXECUTABLE = 'D:\Apps\KingAIBrowser\KingAIMcpServer.exe'
+git clone https://github.com/KingOX-cpp/KingAIBrowser.git D:\code\KingAIBrowser
+cd D:\code\KingAIBrowser
+```
 
-![安装向导与版权说明](images/img-04.jpg)
+Discovery: explicit SDK option → `KINGAI_MCP_EXECUTABLE` → per-user Manager record. No disk scanning or automatic browser download. The sample runner targets Windows; other platform paths in the SDK are not proof of tested browser availability.
 
-- 默认安装路径为 D 盘，完成安装后自动启动浏览器。
+## Python
 
-![安装路径与启动](images/img-05.jpg)
+Python 3.10+; runtime library uses only the standard library.
 
----
+```powershell
+New-Item -ItemType Directory -Force D:\code\kingai-sdk-temp | Out-Null
+$env:TEMP = 'D:\code\kingai-sdk-temp'
+$env:TMP = $env:TEMP
+python -m pip install --cache-dir D:\code\kingai-sdk-cache\pip .\python
+python .\examples\sync.py --live
+```
 
-## 3. 视频网站录制实测
+```python
+from kingai_browser import KingAI
 
-- 在任意视频网站打开目标内容（如"这次国际研讨会"），右上角出现录制按钮。
+with KingAI() as api:
+    print(api.profiles())
+    profile = api.create_profile("My Python profile")
+    browser = api.start(profile_id=profile["profileId"])
+    browser.new_tab("https://example.com")
+    print(browser.read())
+    browser.detach()
+```
 
-![视频网站录制按钮](images/img-06.jpg)
+Also includes `AsyncKingAI` and the `BrowserAutomation` agent facade. [Python docs](python/README.md) · [sync sample](examples/sync.py) · [async sample](examples/async.py).
 
-- 点击录制会弹出法律提示框，必须点击"同意"才启动录制流程。
+## Node.js / TypeScript
 
-![法律提示框](images/img-07.png)
+Node.js 22+. Install the local package from your application directory:
 
-- 录制文件自动保存至 D 盘安装目录下的 `video record` 子目录，命名含视频标题。
+```powershell
+npm install --cache D:\code\kingai-sdk-cache\npm D:\code\KingAIBrowser
+```
 
-![录制文件保存目录](images/img-08.png)
+```javascript
+import { KingAI } from '@kingai/browser-api';
 
----
+const api = new KingAI();
+try {
+  console.log(await api.profiles());
+  const profile = await api.createProfile('My Node profile');
+  const browser = await api.start({ profile_id: profile.profileId });
+  await browser.newTab('https://example.com');
+  console.log(await browser.read());
+  await browser.detach();
+} finally { await api.close(); }
+```
 
-## 4. 直播页面录制与兼容性说明
+TypeScript declarations are included. To run the [repository sample](examples/node.mjs), install dependencies in the repository with `npm install --cache D:\code\kingai-sdk-cache\npm`, then run `node examples/node.mjs --live`.
 
-- 直播页面同样支持右上角一键录制，操作逻辑与点播视频一致。
+## Java
 
-![直播页面录制](images/img-09.png)
+Java 17+ and Maven; uses Jackson and connects directly over stdio.
 
-- 录制完成后可立即回放，确认音画同步与完整性。
+```powershell
+mvn -f java/pom.xml -Dmaven.repo.local=D:/code/kingai-sdk-cache/m2 -Dkingai.build.directory=D:/code/kingai-sdk-build/java install
+```
 
-![录制完成回放](images/img-10.jpg)
+Your application can then depend on local Maven artifact `cn.kingaibrowser.sdk:kingai-browser:0.3.0`, using the same local repository path. This is not a Maven Central release.
 
-- 明确声明支持市面上绝大多数视频及直播网站，但腾讯、爱奇艺等版权保护严格的平台无法录制。
+```java
+import cn.kingaibrowser.sdk.KingAI;
 
-![兼容性说明](images/img-11.jpg)
+try (KingAI api = new KingAI()) {
+    System.out.println(api.profiles());
+    KingAI.Session browser = api.start(); // Existing saved 默认环境
+    browser.newTab("https://example.com");
+    System.out.println(browser.read());
+    browser.detach();
+}
+```
 
----
+[Java docs](java/README.md) · [full profile-creation sample](java/src/main/java/cn/kingaibrowser/sdk/samples/Sample.java).
 
-## 总结
+## Go
 
-- KingAIBrowser 浏览器将录屏能力深度集成于浏览器界面，实现网页视频/直播"一键录制"。
-- 所有录制文件自动保存至本地安装目录下 `video_record` 目录，命名含视频标题，便于管理。
-- 使用前需主动确认法律提示，明确限定用途为个人学习，严禁盗版传播。
-- 兼容主流视频与直播网站，但对腾讯、爱奇艺等强 DRM 保护平台不支持录制。
-- **注意**：安装时请关闭 360 杀毒，由于是个人开发的浏览器，没有签名 360 会误报。如果担心是病毒，可以在虚拟机下安装。
+Go 1.24+. In your application's `go.mod`, use the local checkout:
 
----
+```go
+require github.com/KingOX-cpp/KingAIBrowser/go v0.0.0
+replace github.com/KingOX-cpp/KingAIBrowser/go => D:/code/KingAIBrowser/go
+```
 
-> 📺 **源视频地址**：[自己开发了一个网站视频录制的浏览器](https://www.bilibili.com/video/BV1wmNJ66Eeg?vd_source=1048c046d6f06cce7440c07d0bd4c5c5&spm_id_from=333.1369.0.0)
+`v0.0.0` is a local-replace placeholder, not a published release tag. Import `kingai "github.com/KingOX-cpp/KingAIBrowser/go"` and call:
+
+```go
+api, err := kingai.Connect(ctx, kingai.Options{})
+if err != nil { return err }
+defer api.Close()
+browser, err := api.Start(ctx, nil) // Existing saved 默认环境
+if err != nil { return err }
+if _, err = browser.NewTab(ctx, "https://example.com"); err != nil { return err }
+page, err := browser.Read(ctx)
+if err != nil { return err }
+fmt.Println(page)
+_, err = browser.Detach(ctx)
+return err
+```
+
+The snippet is a function body with `context` and `fmt` imported by the caller. Set `GOMODCACHE`, `GOCACHE`, `GOTMPDIR` to D: before resolving dependencies. [Go docs](go/README.md) · [runnable sample](go/examples/basic/main.go). From `go/`, run `go run ./examples/basic --live`.
+
+## Connect an AI agent through MCP
+
+Use **Agent integration** in the Manager to install MCP into a supported agent. For a client with manual stdio configuration, adapt this to its configuration format:
+
+```json
+{
+  "mcpServers": {
+    "kingai-browser": {
+      "command": "D:\\Apps\\KingAIBrowser\\KingAIMcpServer.exe",
+      "args": []
+    }
+  }
+}
+```
+
+Replace the path. The agent must support MCP stdio and accept the server connection. `tools/list` provides the authoritative schemas. Supported server versions provide Skill tools: `skills_list`, `skill_describe`, `skill_run`, `skill_status`, `skill_cancel`.
+
+Example prompt: “Open my saved Research profile, visit example.com and read the page. Keep the browser open when finished.”
+
+![Agent integration in KingAI Manager](images/mcp-skill-run.png)
+
+## Samples and tests
+
+Samples and tests call the same reusable sample functions. Real CLI use requires `--live`; samples create saved profiles and detach, leaving browser windows open. Repeated use of the same name can return a duplicate-name error. The async sample uses the existing default profile.
+
+The source SDK's previous Windows run passed **17 fixture-backed tests**: Python 7, Node.js 4, Java 3, Go 3. These exercise SDK stdio communication with an in-memory MCP simulator, sample sequences, selected CRUD errors, no automatic replay, observation locking and preview bounds. **This public-repository layout and updated Go module path have not been retested.** These tests do not validate real browsing, fingerprint detection or account entitlements.
+
+See [sample/test details](SAMPLES.md). With Python, Node.js, Java, Maven and Go installed:
+
+```powershell
+.\tests\Run-Samples.ps1 -GoExecutable go -MavenCommand mvn.cmd
+```
+
+The runner keeps dependencies/outputs on D: and does not build Chromium or Rust. Tests do not fall back to a real browser when the test MCP path is absent.
+
+## API behavior to know
+
+- `tools` / `Tools` and `call` / `Call` expose available MCP tools. Raw arguments remain snake_case; returned IDs include `sessionId` and `targetId`.
+- `start()` without a profile selects the existing unique **默认环境**. It does not create a missing default. Temporary profiles require an explicit request.
+- Client close disconnects its MCP. Explicit session close methods close browsers. Profile CRUD requires a compatible installed MCP/Runtime and login.
+- Account limits apply to concurrently open environments, not clicks or SDK calls. Humanize requires a valid entitlement; requested flags/metadata alone do not prove it was applied.
+- Input may require a visible selected page. For `PAGE_NOT_VISIBLE`, restore the window and activate the intended tab.
+- Sessions use selected tabs; serialize multi-step workflows. These are not Playwright-compatible multi-Page objects.
+- Timeout/disconnection does not prove an action failed. Side effects are not automatically retried. Use explicit preview methods for bounded evaluation results.
+
+[API contract](CONTRACT.md) · [source installation / release notes](RELEASE.md) · [GitHub Issues](https://github.com/KingOX-cpp/KingAIBrowser/issues). Remove secrets and account data from reports.
+
+## License
+
+Client SDK code is available under [BSD-3-Clause](LICENSE), retaining included copyright notices. Browser software and third-party dependencies have separate terms. This repository does not vendor CloakBrowser code.

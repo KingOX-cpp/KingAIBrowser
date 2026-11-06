@@ -1,0 +1,31 @@
+# SDK build outputs and local dependency folders
+node_modules/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+build/
+dist/
+target/
+java-build/
+*.class
+*.jar
+*.exe
+*.dll
+*.log
+*.tsbuildinfo
+# Local configuration, credentials and browser data
+.env
+.env.*
+!.env.example
+sdk-installation.json
+profiles.db*
+User Data/
+artifacts/
+downloads/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
