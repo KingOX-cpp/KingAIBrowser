@@ -16,4 +16,4 @@ Use reusable sample functions so tests and command-line examples exercise the sa
 
 For Windows development, keep cloned dependencies, caches and build outputs on D:. Do not run compilation, builds, checks or tests on a maintainer's workspace without authorization. No Chromium/GN or Rust build is needed to edit these SDKs.
 
-When submitting a change, state what changed, tests actually run (or explicitly not run), and whether any real-browser behavior remains unverified. Contributions must preserve license notices and be compatible with the repository's BSD-3-Clause license.
+When submitting a change, state what changed, tests actually run (or explicitly not run), and whether any real-browser behavior remains unverified. Contributions must preserve applicable third-party notices and be compatible with the repository's MIT license.

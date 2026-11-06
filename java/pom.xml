@@ -3,12 +3,14 @@
   <groupId>cn.kingaibrowser.sdk</groupId><artifactId>kingai-browser</artifactId><version>0.3.0</version>
   <name>KingAI Browser Java SDK</name><description>Managed KingAI browsers over stdio MCP</description>
   <url>https://github.com/KingOX-cpp/KingAIBrowser</url>
-  <licenses><license><name>BSD 3-Clause License</name><url>https://github.com/KingOX-cpp/KingAIBrowser/blob/main/LICENSE</url></license></licenses>
+  <licenses><license><name>MIT License</name><url>https://github.com/KingOX-cpp/KingAIBrowser/blob/main/LICENSE</url></license></licenses>
   <scm><url>https://github.com/KingOX-cpp/KingAIBrowser</url><connection>scm:git:https://github.com/KingOX-cpp/KingAIBrowser.git</connection><developerConnection>scm:git:ssh://git@github.com/KingOX-cpp/KingAIBrowser.git</developerConnection></scm>
   <properties><maven.compiler.release>17</maven.compiler.release><project.build.sourceEncoding>UTF-8</project.build.sourceEncoding><kingai.build.directory>${project.basedir}/target</kingai.build.directory></properties>
   <dependencies><dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId><version>2.20.1</version></dependency>
   <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>5.11.4</version><scope>test</scope></dependency></dependencies>
-  <build><directory>${kingai.build.directory}</directory><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.13.0</version></plugin>
+  <build><directory>${kingai.build.directory}</directory>
+  <resources><resource><directory>src/main/resources</directory></resource><resource><directory>${project.basedir}</directory><targetPath>META-INF</targetPath><includes><include>LICENSE</include><include>THIRD_PARTY_NOTICES.txt</include></includes></resource></resources>
+  <plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.13.0</version></plugin>
   <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-source-plugin</artifactId><version>3.3.1</version><executions><execution><id>sources</id><goals><goal>jar-no-fork</goal></goals></execution></executions></plugin>
   <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>3.5.2</version></plugin></plugins></build>
 </project>

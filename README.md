@@ -8,9 +8,9 @@
 
 KingAI Browser combines persistent fingerprint profiles, Chromium/Blink source-level modifications and browser-native automation. AI agents use its **stdio MCP server**; applications use the **four SDKs in this repository**. Both paths share the installed MCP, Runtime and browser execution layer.
 
-**SDK 0.3.0 · BSD-3-Clause · No Playwright dependency · No HTTP service required**
+**SDK 0.3.0 · MIT License · No Playwright dependency · No HTTP service required**
 
-This repository contains open-source client SDKs, samples and tests. Install KingAI Browser separately from the [official website](https://www.kingaibrowser.cn/) or [alternative website](https://kingaibrowser.ccwu.cc/). Browser binaries, Manager, MCP/Runtime executables and Chromium patches are distributed separately and are not licensed by this repository's SDK license. PyPI/npm/Maven packages have not been published; use source installation below.
+This repository contains open-source client SDKs, samples and tests. Download KingAI Browser from the [official website](https://www.kingaibrowser.cn/), [alternative website](https://kingaibrowser.ccwu.cc/) or [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases). PyPI/npm/Maven packages have not been published; use source installation below.
 
 ![KingAI fingerprint environment manager](images/manager-dashboard.png)
 
@@ -215,4 +215,10 @@ The runner keeps dependencies/outputs on D: and does not build Chromium or Rust.
 
 ## License
 
-Client SDK code is available under [BSD-3-Clause](LICENSE), retaining included copyright notices. Browser software and third-party dependencies have separate terms. This repository does not vendor CloakBrowser code.
+The Python, Node.js, Java and Go SDKs, samples and tests are available under the [MIT License](LICENSE). You may use, copy, modify, redistribute and use them commercially while retaining the copyright and license notice. Applicable third-party notices are preserved in [THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt). This repository does not vendor CloakBrowser code.
+
+## Websites and browser downloads
+
+- Official website: **https://www.kingaibrowser.cn/**
+- Alternative website: **https://kingaibrowser.ccwu.cc/**
+- Browser downloads on GitHub Releases: **https://github.com/KingOX-cpp/KingAIBrowser/releases**

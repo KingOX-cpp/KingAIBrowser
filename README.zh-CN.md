@@ -8,9 +8,9 @@
 
 KingAI Browser 将**持久化指纹环境、Chromium/Blink 源码级修改、浏览器原生自动化**结合起来。AI Agent 通过 **stdio MCP** 操作浏览器，开发者通过 **Python、Node.js、Java、Go SDK** 编写自动化程序，两种方式共用安装版 MCP、Runtime 和浏览器执行内核。
 
-**SDK 0.3.0 · BSD-3-Clause 开源 · 无需 Playwright · 无需 HTTP 服务**
+**SDK 0.3.0 · MIT 开源协议 · 无需 Playwright · 无需 HTTP 服务**
 
-本仓库开源客户端 SDK、调用示例和测试。请从[官方网站](https://www.kingaibrowser.cn/)或[备用网站](https://kingaibrowser.ccwu.cc/)下载浏览器。浏览器内核补丁、Manager、MCP/Runtime 可执行程序由浏览器安装版另行提供，不包含在本仓库的 SDK 开源许可中。目前尚未发布 PyPI、npm、Maven 公共包，请按下文从源码安装。
+本仓库开源客户端 SDK、调用示例和测试。浏览器可从[官方网站](https://www.kingaibrowser.cn/)、[备用网站](https://kingaibrowser.ccwu.cc/)或 [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases) 下载。目前尚未发布 PyPI、npm、Maven 公共包，请按下文从源码安装。
 
 ![KingAI 指纹环境管理器](images/manager-dashboard.png)
 
@@ -215,4 +215,10 @@ return err
 
 ## 开源许可
 
-客户端 SDK 使用 [BSD-3-Clause](LICENSE)，保留已有版权声明。浏览器软件和第三方依赖按各自条款提供。本仓库未引入 CloakBrowser 源码。
+Python、Node.js、Java、Go SDK 及示例和测试使用 [MIT 开源协议](LICENSE)，允许自由使用、复制、修改、传播和商业使用，分发时保留版权与许可声明即可。适用的第三方声明保留在 [THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt)。本仓库未引入 CloakBrowser 源码。
+
+## 网站与浏览器下载
+
+- 官方网站：**https://www.kingaibrowser.cn/**
+- 备用网站：**https://kingaibrowser.ccwu.cc/**
+- GitHub Releases 浏览器下载：**https://github.com/KingOX-cpp/KingAIBrowser/releases**
