@@ -1,5 +1,15 @@
 # Samples 与验证结果
 
+## 本地待 review 的新增内容（未运行）
+
+- 四语言 launch 与 Python/Node doctor；stderr 转发，旧 MCP info 兼容提示。
+- Python 上下文和 Java 自动资源退出保留浏览器；显式关闭方法单独调用。
+- python/tests/test_launch_ownership.py 当前有 9 个用例，覆盖非 owned/owned 上下文、异常退出、清理失败不覆盖原异常、已释放连接、启动失败、不重试及显式关闭。**全部未运行**。
+- tests/Run-Samples.ps1 使用 `python -m unittest discover -s python/tests -v` 的绝对路径形式，因此会自动发现 test_launch_ownership.py；不需要在 test_samples.py 导入它。未实际执行，不能称其已通过。
+- 登录态复用、指纹信号观察、多环境共存、Agent stdio 配置见 examples/README.md；均未实机执行。
+
+以下 17 项是此前源 SDK 的历史记录，不含上述新增用例，也不证明新生命周期和示例已验证。
+
 源 SDK 验证日期：2026-11-06。以下结果来自迁入本仓库前的源 SDK；本仓库整理、Go module 路径和 js/ 目录调整后未重新测试。以下单元测试对应原有最小 sample 函数。新增的四语言完整 workflow 包含 DOM 查询、输入、点击与结果确认，见 [examples/README.md](examples/README.md)，本轮未运行或测试。
 
 | 语言 | Sample 实现 | 测试 | 本轮结果 |

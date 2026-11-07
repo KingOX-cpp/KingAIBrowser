@@ -17,7 +17,7 @@ Repository = "https://github.com/KingOX-cpp/KingAIBrowser"
 Issues = "https://github.com/KingOX-cpp/KingAIBrowser/issues"
 
 [tool.setuptools]
-py-modules = ["kingai_browser", "_kingai_stdio", "_kingai_discovery", "_kingai_automation", "_kingai_async"]
+py-modules = ["kingai_browser", "_kingai_stdio", "_kingai_discovery", "_kingai_automation", "_kingai_async", "_kingai_doctor"]
 
 [project.scripts]
 kingai-browser = "kingai_browser:main"

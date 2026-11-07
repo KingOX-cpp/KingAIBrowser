@@ -6,6 +6,35 @@ English | [简体中文](README.zh-CN.md) | [Project / 项目](../README.md)
 
 Calls the installed KingAI MCP over stdio. No HTTP service or Playwright is required. Install the browser, sign in and use matching MCP/Runtime components first.
 
+Lifecycle update: Python launch contexts and Java automatic Session resource cleanup detach and preserve windows. Explicit browser shutdown uses Python close()/close_browser(), Node close()/closeBrowser(), Java closeBrowser(), or Go Close()/CloseBrowser(). New ownership cases and launch/doctor changes are unexecuted; the historical 17-test result does not cover them.
+
+After disconnecting, the original Session can no longer operate the retained window. Close it in Manager, or discover the real active session through a new client and explicitly attach if authorized. No automatic reconnection occurs. Java closeBrowser() throws SESSION_DISCONNECTED if its client is closed.
+
+## Quick entry: launch
+
+After installation and login, this entry discovers/connects MCP and starts a saved profile. The default must already exist; no missing-profile fallback is created.
+
+```python
+from kingai_browser import launch
+
+browser = launch()  # Existing unique default environment
+try:
+    browser.new_tab("https://example.com")
+    print(browser.read())
+finally:
+    browser.detach()
+```
+
+The returned session owns its new client. Close closes the browser and releases MCP; detach preserves the browser and releases MCP; disconnect only releases the connection. Explicit-client APIs remain available.
+
+[Troubleshooting / 故障排查](../TROUBLESHOOTING.md)
+
+```powershell
+python -m kingai_browser doctor
+```
+
+Read-only diagnostics do not launch browsers. Login is unknown and Runtime unverified. MCP stderr is forwarded to the terminal, not stored in the report. CLI info falls back to basic metadata on older MCP versions.
+
 ## Installation and discovery
 
 ```powershell

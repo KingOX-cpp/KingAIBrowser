@@ -2,7 +2,7 @@
 import argparse
 from kingai_browser import KingAI
 
-def run_sample(api, name="Python SDK 演示"):
+def run_sample(api, name="Python SDK example"):
     info = api.info()
     profiles = api.profiles()
     profile = api.create_profile(name)

@@ -6,6 +6,28 @@
 
 本库通过 stdio 调用已安装的 KingAI MCP，不需要 HTTP 服务或 Playwright。先安装浏览器并登录，MCP/Runtime 必须支持所需工具。
 
+生命周期更新：Python launch 上下文和 Java Session 自动资源退出会 detach 并保留窗口。显式关闭分别使用 Python close()/close_browser()、Node close()/closeBrowser()、Java closeBrowser()、Go Close()/CloseBrowser()。新增 ownership、launch、doctor 均未执行验证，历史 17 项测试不覆盖这些改动。
+
+连接释放后，原 Session 对象不能继续操作保留窗口。可在 Manager 中关闭，或由新客户端发现真实会话、在授权允许时显式 attach 后关闭；SDK 不自动重连。Java closeBrowser() 在客户端已关闭时抛 SESSION_DISCONNECTED。
+
+## 快速入口：launch
+
+完成安装和登录后，下面的入口负责定位 MCP、连接并启动环境。默认只打开已有的唯一“默认环境”，不会自动创建缺失环境。
+
+```java
+import cn.kingaibrowser.sdk.KingAI;
+
+try (KingAI.Session browser = KingAI.launch()) {
+    browser.newTab("https://example.com");
+    System.out.println(browser.read());
+}
+// Explicit profile: KingAI.launch(new KingAI.Options(), profileId)
+```
+
+返回的会话拥有新客户端。Session.close() 自动清理 owned launch 会话：detach 并释放 MCP，保留浏览器。显式关闭浏览器用 closeBrowser()；detach 保留窗口并释放 owned 连接；disconnect 仅释放该连接。原有显式客户端 API 保持可用。
+
+[Troubleshooting / 故障排查](../TROUBLESHOOTING.md)
+
 ## 安装与定位
 
 ```powershell
@@ -76,7 +98,7 @@ Every installed tool is available through generic `call` / `Call`; convenience m
 
 ## 生命周期、错误与权限
 
-- Client close disconnects MCP; session close closes the browser. Detach keeps the browser available. / 客户端关闭、会话断开和浏览器关闭含义不同。
+- Client close disconnects MCP; Session.close() detaches an owned launch session and preserves its browser. Only closeBrowser() explicitly closes the browser. / 客户端 close 断开 MCP；Session.close() 清理 owned launch 会话并保留窗口，显式关浏览器使用 closeBrowser()。
 - Default start requires an existing unique 默认环境; it does not create one. / 默认启动不会自动创建缺失环境。
 - Update only closed profiles; deletion requires explicit confirmation and removes persistent data. / 更新前关闭环境；删除需确认且会移除持久数据。
 - Side effects are not automatically retried after timeout or observation failure. / 超时和观察失败不自动重放输入。

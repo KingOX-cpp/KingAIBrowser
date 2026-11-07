@@ -12,7 +12,62 @@ KingAI Browser 将**持久化指纹环境、Chromium/Blink 源码级修改、浏
 
 本仓库开源客户端 SDK、调用示例和测试。浏览器可从[官方网站](https://www.kingaibrowser.cn/)、[备用网站](https://kingaibrowser.ccwu.cc/)或 [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases) 下载。目前尚未发布 PyPI、npm、Maven 公共包，请按下文从源码安装。
 
+## 六大功能
+
+KingAI Browser 不只是自动化 SDK，也是集网页工具、独立指纹环境与 AI 工作流于一体的浏览器。以下六项与官网功能介绍保持一致。
+
+| 功能 | 介绍 | 主要能力 |
+| --- | --- | --- |
+| **01 · 网页视频录制** | 鼠标悬停在支持的播放器上即可开始或停止录制，按钮随播放器移动，不遮挡画面；完成后保存到本地并提示文件路径。 | HTML `<video>` 原生捕获、标签页关闭时自动收尾、独立进程异步写入文件。 |
+| **02 · 网页文字操作增强** | 当网页脚本阻止选中、复制或右键菜单时，通过显式快捷操作处理页面中实际存在的 DOM 文本。 | `Shift + 右键` 调用原生菜单、`Alt + C` 复制当前选择、`Alt + 拖拽` 临时选择。 |
+| **03 · 永久免费指纹管理器** | 创建、编辑、分组和启动多套保存环境，每套环境独立保存 User Data、Cookie、代理及配置。 | 日常环境管理不限制环境数量与启动次数；环境数据与身份配置隔离，可配置独立代理。 |
+| **04 · 源码级指纹补丁 + humanize** | 在 Chromium/Blink 层处理关键指纹面，在浏览器输入层实现自然化操作。 | Canvas / Audio / ClientRects 固定噪声、WebGL / WebGPU 真实硬件模板、自然鼠标轨迹、键入节奏与连续滚动。 |
+| **05 · 窗口同步** | 一个主控窗口实时同步多个浏览器，各窗口保留各自的指纹、Cookie 和代理。 | 鼠标、键盘、滚动、中文输入、地址栏粘贴、标签页操作，以及多显示器和网格布局。 |
+| **06 · AI 自动化** | 将真实操作录制成可复用 Skill，由内置 Agent 辅助适配页面与元素变化，也可让外部 Agent 通过 MCP 调用。 | Skill 录制与回放、单步调试与元素重定位、Agent MCP 接入、四语言 SDK。 |
+
+永久免费指纹管理指日常环境管理与手动启动；窗口同步、humanize、Skill 和 MCP 并发等能力按当前账号权益开放。视频录制以支持的 HTML 视频播放器为基础；文字增强只处理实际 DOM 文本，不包含图片或 Canvas 文字识别。
+
+## DETECTION MATRIX
+
+以下为官网展示的检测对照及浏览器级实现说明。表中 Chrome + Playwright 一栏描述官网对照配置，不能视为所有 Playwright 配置的固定行为。
+
+| 检测项目 | Chrome + Playwright（官网对照配置） | KingAI Browser | 实现方式 |
+| --- | --- | --- | --- |
+| reCAPTCHA v3 | **0.1 · bot** | **0.9 · human** | 服务端验证，特定环境实测。 |
+| `navigator.webdriver` | `true` | `false` | Chromium / Blink 源码级补丁。 |
+| UA / Client Hints | 随浏览器内核使用默认值 | 按环境配置并保持一致 | UA、品牌、版本与平台交叉校验。 |
+| CDP Error stack 检测 | 可触发检测钩子 | 阻止检测副作用 | V8 Inspector 保护。 |
+| 鼠标按下信号 | buttons / pressure 常见缺省为 0 | **buttons 1 · pressure 0.5** | Chromium 输入层显式传递；此处指左键按下事件。 |
+| 鼠标移动与点击 | 直线或固定坐标 | 贝塞尔曲线与自然节奏 | 浏览器输入层 humanize。 |
+| 拟人化输入 | 一次性输入 | 节奏、错输与回退 | 浏览器输入层 humanize。 |
+| 指纹环境一致性 | 需自行拼装与维护 | 多配置面统一校验 | 源码补丁与启动前校验。 |
+
+**0.1 / 0.9 是官网记录的特定配置、网络和测试流程下的实测对照，不是本仓库 SDK 测试结果，也不构成对任意网站、风控或验证码的通过保证。** 代理质量、账号历史和实际操作行为都会影响结果；humanize 需要有效账号权益。
+
 ![KingAI 指纹环境管理器](images/manager-dashboard.png)
+
+生命周期更新：Python launch 上下文和 Java Session 自动资源退出会 detach 并保留窗口。显式关闭分别使用 Python close()/close_browser()、Node close()/closeBrowser()、Java closeBrowser()、Go Close()/CloseBrowser()。新增 ownership、launch、doctor 均未执行验证，历史 17 项测试不覆盖这些改动。
+
+连接释放后，原 Session 对象不能继续操作保留窗口。可在 Manager 中关闭，或由新客户端发现真实会话、在授权允许时显式 attach 后关闭；SDK 不自动重连。Java closeBrowser() 在客户端已关闭时抛 SESSION_DISCONNECTED。
+
+## 快速入口与诊断
+
+```python
+from kingai_browser import launch
+
+with launch() as browser:
+    browser.new_tab("https://example.com")
+    print(browser.read())
+```
+
+先安装并登录浏览器。launch 默认使用已有唯一“默认环境”；上下文结束时 detach 并保留浏览器。其他语言入口与显式环境选择见各 SDK 文档。
+
+```powershell
+python -m kingai_browser doctor
+node js/cli.mjs doctor
+```
+
+[Troubleshooting / 故障排查](TROUBLESHOOTING.md). 本轮新增入口和诊断尚未执行验证。
 
 ## 指纹环境与 AI 自动化
 
@@ -84,7 +139,7 @@ New-Item -ItemType Directory -Force D:\code\kingai-sdk-temp | Out-Null
 $env:TEMP = 'D:\code\kingai-sdk-temp'
 $env:TMP = $env:TEMP
 python -m pip install --cache-dir D:\code\kingai-sdk-cache\pip .\python
-python .\python\examples\sync.py --live
+python .\python\examples\browser_form_automation.py --live
 ```
 
 ```python

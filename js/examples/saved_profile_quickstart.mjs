@@ -1,6 +1,6 @@
 import { pathToFileURL } from 'node:url';
 
-export async function runSample(api, name='Node SDK 演示') {
+export async function runSample(api, name='Node SDK example') {
   const info=await api.info();
   const profiles=await api.profiles();
   const profile=await api.createProfile(name);

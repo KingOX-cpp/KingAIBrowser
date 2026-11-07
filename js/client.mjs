@@ -10,6 +10,18 @@ export { discoverMcp, KingAIError };
 export { BrowserAutomation } from './automation.mjs';
 const scopes = new AsyncLocalStorage();
 
+export async function launch({ profileId, headless = false, temporary = false, ...clientOptions } = {}) {
+  const api = new KingAI(clientOptions);
+  try {
+    const browser = await api.start({ ...(profileId === undefined ? {} : { profile_id: profileId }), headless, temporary });
+    browser._ownsClient = true;
+    return browser;
+  } catch (error) {
+    await api.close();
+    throw error;
+  }
+}
+
 export class KingAI {
   constructor({ mcpExecutable, timeoutMs = 360000, language, fileRoots, downloadDir, artifactDir } = {}) {
     if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new TypeError('timeoutMs must be positive and finite');
@@ -35,7 +47,7 @@ export class KingAI {
     try {
       const command = await discoverMcp(this._executable);
       if (this._closed) throw new Error('Client closed during discovery');
-      this._transport = new StdioClientTransport({ command, cwd: dirname(command), env: this._env, stderr: 'ignore' });
+      this._transport = new StdioClientTransport({ command, cwd: dirname(command), env: this._env, stderr: 'inherit' });
       this._client = new Client({ name: 'kingai-node', version: '0.3.0' }, { capabilities: {} });
       this._client.onclose = () => { this._dead = true; };
       await this._client.connect(this._transport, { timeout: this._timeoutMs });
@@ -187,6 +199,17 @@ export class BrowserSession {
   storage(options = {}) { return this.call('storage_get', options); }
   upload(paths, selector, options = {}) { return this.call('browser_upload', { ...options, paths, ...(selector === undefined ? {} : { selector }) }); }
   download(selector, options = {}) { return this.call('browser_download', { ...options, ...(selector === undefined ? {} : { selector }) }); }
-  detach() { return this.call('browser_detach'); }
-  close() { return this.call('browser_close'); }
+  async disconnect() {
+    if (!this._ownsClient) throw new Error('This session does not own its client; close the client explicitly');
+    await this.client.close();
+  }
+  async detach() {
+    try { return await this.call('browser_detach'); }
+    finally { if (this._ownsClient) await this.client.close(); }
+  }
+  async close() {
+    try { return await this.call('browser_close'); }
+    finally { if (this._ownsClient) await this.client.close(); }
+  }
+  closeBrowser() { return this.close(); }
 }

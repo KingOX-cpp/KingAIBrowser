@@ -10,6 +10,7 @@
 
 | 能力 | Python | Node.js/TS | Java | Go |
 | --- | --- | --- | --- | --- |
+| 一行保存环境入口 | launch(profile_id=...) | launch({profileId}) | KingAI.launch(options, profileId) | Launch(ctx, options, profileID) |
 | 全部 MCP 工具发现/调用 | tools / call | tools / call | tools / call | Tools / Call |
 | 保存环境 CRUD | profile / create_profile / update_profile / delete_profile | profile / createProfile / updateProfile / deleteProfile | profile / createProfile / updateProfile / deleteProfile | Profile / CreateProfile / UpdateProfile / DeleteProfile |
 | 会话/标签页/输入/读取 | 有 | 有 | 有 | 有 |
@@ -64,7 +65,15 @@ SDK 0.3.0 不承诺与标准 Playwright Browser/Page 对象互换。默认一个
 
 客户端仅启动自己的 MCP，Runtime 仍由已有连接路径按需启动；不会执行 shell、搜索 PATH 或自动下载另一套内核。客户端传最小系统环境和显式目录设置，不传宿主全部环境。
 
-客户端 close 只断开该客户端的 MCP，浏览器 close 是独立明确动作。Java 使用 try-with-resources；Go defer Client.Close；Python with/async with；Node.js try/finally。SDK 不按进程名杀 Runtime/浏览器或进程树。强制结束进程后的行为仍需实际回归，不能承诺所有异常退出均完成清理。
+客户端 close 只断开该客户端的 MCP，浏览器关闭是独立明确动作。launch 返回会话拥有其新建的客户端；Python with launch() 和 Java try-with-resources Session 退出时 detach 并释放客户端，保留浏览器窗口。非 owned Session 的自动资源退出不接管外部客户端或关闭浏览器。Python close()/close_browser()、Node close()/closeBrowser()、Go Close()/CloseBrowser() 仍显式关闭浏览器；Java 显式关闭用 closeBrowser()，Session.close() 仅作上述自动资源清理。已 detach 的 owned 会话不应再次自动 detach。
+
+显式创建客户端时，Java try-with-resources KingAI、Go defer Client.Close、Python with/async with KingAI、Node try/finally 仅管理客户端连接。SDK 不按进程名杀 Runtime/浏览器或进程树。强制结束后的行为仍需实际回归，不能承诺所有异常退出均完成清理。
+
+Java waitFor/type/hover 和 click/fill 的 options 重载、Go Wait/Type/Hover 和 Click/Fill 的可选 options 支持高层输入；humanize 可显式传 false。Java 使用 waitFor 避免混淆 Object.wait。Python、Node、Go 的会话 close/Close 仍显式关浏览器；Java Session.close 用于自动资源清理，显式关浏览器必须调用 closeBrowser。客户端 close 与会话关闭含义不同，不能仅凭同名方法推断行为。
+
+owned 会话 detach 或释放客户端后，原对象不可继续控制保留的窗口。需要关闭时，可在管理器操作，或通过新客户端发现实际会话并在授权允许时显式 attach，再调用浏览器关闭方法。Java closeBrowser 在客户端已关闭时抛 SESSION_DISCONNECTED，不返回 null，也不自动重连或重放。
+
+Python/Node CLI doctor 只执行定位、初始化、tools/list 与可选 sdk_info，不启动 Runtime/浏览器。登录态未知和 Runtime 未验证必须如实显示。MCP stderr 转发到调用方 stderr，不持久化；共享诊断前由用户脱敏。新增入口、诊断和生命周期用例本轮未执行验证。
 
 ## 操作与观察
 

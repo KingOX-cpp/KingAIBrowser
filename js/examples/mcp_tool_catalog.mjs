@@ -1,5 +1,4 @@
 /** Read-only catalog of every tool exposed by the installed MCP.
- * 中文：读取工具说明和输入 schema，不执行工具，不启动环境浏览器。
  * Run: node js/examples/mcp_tool_catalog.mjs [browser_query]
  */
 import { KingAI } from '../client.mjs';

@@ -77,7 +77,7 @@ class StdioTransport:
         self._writes = queue.Queue(maxsize=64)
         self._process = subprocess.Popen(
             [str(path)], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL, env=env, cwd=str(path.parent),
+            stderr=None, env=env, cwd=str(path.parent),
             creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
             close_fds=True, bufsize=0,
         )

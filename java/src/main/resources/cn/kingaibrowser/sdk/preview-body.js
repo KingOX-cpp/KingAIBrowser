@@ -37,5 +37,5 @@
             }
             const value = preview(source,0);
             return {value, truncated, limits:{textChars:12000,stringChars:1000,items:40,depth:5,nodes:500},
-                    hint:truncated ? '结果为截断预览，不代表完整数据。只读提取请限定字段，并按数组索引/文字偏移显式分段；不要重放有副作用的原脚本。' : ''};
+                    hint:truncated ? 'This is a truncated preview, not complete data. Select fewer fields or explicitly page read-only data by index or offset. Do not replay scripts with side effects.' : ''};
         })()

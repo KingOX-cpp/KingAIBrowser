@@ -4,6 +4,10 @@ This is a recipe reference, not a script to run every operation on your account.
 
 ## 1. Calling conventions / 调用方式
 
+Lifecycle update: Python `with launch()` and Java automatic `Session.close()` detach owned connections and preserve browser windows. Non-owned context/resource exit performs no cleanup. Explicit shutdown is Python `close_browser()`/`close()`, Node `closeBrowser()`/`close()`, Java `closeBrowser()`, Go `CloseBrowser()`/`Close()`. The generic snippets below do not imply that every object named close has the same ownership semantics.
+
+Java/Go input convenience methods now support options: `browser.click(ref, Map.of("humanize", false))`, `browser.fill(ref, text, Map.of("humanize", false))`, `browser.type(ref, text, options)`, `browser.hover(ref, options)`, `browser.waitFor(options)`; Go uses `Click(ctx,ref,Arguments{"humanize":false})`, `Fill(ctx,ref,text,options)`, `Type`, `Hover`, `Wait`. Existing ref-only calls remain valid. New code has not been executed in this change.
+
 Python examples below assume `api` is a connected `KingAI` and `browser` is its running session. Session calls insert `session_id` automatically. Equivalent generic calls in every language:
 
 ```python

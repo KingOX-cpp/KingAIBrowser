@@ -6,6 +6,34 @@
 
 本库通过 stdio 调用已安装的 KingAI MCP，不需要 HTTP 服务或 Playwright。先安装浏览器并登录，MCP/Runtime 必须支持所需工具。
 
+生命周期更新：Python launch 上下文和 Java Session 自动资源退出会 detach 并保留窗口。显式关闭分别使用 Python close()/close_browser()、Node close()/closeBrowser()、Java closeBrowser()、Go Close()/CloseBrowser()。新增 ownership、launch、doctor 均未执行验证，历史 17 项测试不覆盖这些改动。
+
+连接释放后，原 Session 对象不能继续操作保留窗口。可在 Manager 中关闭，或由新客户端发现真实会话、在授权允许时显式 attach 后关闭；SDK 不自动重连。Java closeBrowser() 在客户端已关闭时抛 SESSION_DISCONNECTED。
+
+## 快速入口：launch
+
+完成安装和登录后，下面的入口负责定位 MCP、连接并启动环境。默认只打开已有的唯一“默认环境”，不会自动创建缺失环境。
+
+```javascript
+import { launch } from '@kingai/browser-api';
+
+const browser = await launch();
+try {
+  await browser.newTab('https://example.com');
+  console.log(await browser.read());
+} finally { await browser.detach(); }
+```
+
+返回的会话拥有新客户端。close 关闭浏览器并释放 MCP；detach 保留浏览器并释放 MCP；disconnect 仅释放连接。原有显式客户端 API 保持可用。
+
+[Troubleshooting / 故障排查](../TROUBLESHOOTING.md)
+
+```powershell
+node js/cli.mjs doctor
+```
+
+只读诊断不启动浏览器；登录态显示 unknown，Runtime 未验证。MCP stderr 转发至终端，不存入报告。旧 MCP 缺少 sdk_info 时 CLI info 仍返回基础信息。
+
 ## 安装与定位
 
 ```powershell

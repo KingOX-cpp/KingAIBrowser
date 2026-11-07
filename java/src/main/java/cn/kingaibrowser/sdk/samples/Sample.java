@@ -20,6 +20,6 @@ public final class Sample {
     }
     public static void main(String[] args) throws Exception {
         if(args.length!=1||!args[0].equals("--live"))throw new IllegalArgumentException("Pass --live to create an environment in your real KingAI installation");
-        try(KingAI api=new KingAI()){System.out.println(runSample(api,"Java SDK 演示"));}
+        try(KingAI api=new KingAI()){System.out.println(runSample(api,"Java SDK example"));}
     }
 }

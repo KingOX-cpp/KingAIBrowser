@@ -12,7 +12,62 @@ KingAI Browser combines persistent fingerprint profiles, Chromium/Blink source-l
 
 This repository contains open-source client SDKs, samples and tests. Download KingAI Browser from the [official website](https://www.kingaibrowser.cn/), [alternative website](https://kingaibrowser.ccwu.cc/) or [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases). PyPI/npm/Maven packages have not been published; use source installation below.
 
+## Six core features
+
+KingAI Browser combines everyday web tools, isolated fingerprint environments and AI workflows. These six features follow the product website's feature overview.
+
+| Feature | Description | Highlights |
+| --- | --- | --- |
+| **01 · Web video recording** | Hover over a supported player to start or stop recording. Controls follow the player without covering its picture; recordings are saved locally with the output path shown. | Native HTML `<video>` capture, automatic finalization when tabs close, asynchronous file writes in a separate process. |
+| **02 · Web text enhancements** | Explicit shortcuts help select, copy and access native menus for actual DOM text when page scripts interfere. | `Shift + right-click` for the native menu, `Alt + C` to copy the selection, `Alt + drag` for temporary text selection. |
+| **03 · Permanently free fingerprint manager** | Create, edit, group and launch saved environments, each with separate User Data, cookies, proxy settings and configuration. | No environment-count or launch-count limit for everyday management; isolated profile data and identity configuration with per-profile proxies. |
+| **04 · Source-level fingerprint patches + humanize** | Handle fingerprint surfaces inside Chromium/Blink and naturalize automation in the browser input layer. | Stable Canvas / Audio / ClientRects noise, real WebGL / WebGPU hardware templates, natural mouse trajectories, typing rhythm and continuous scrolling. |
+| **05 · Window synchronization** | Drive multiple browser windows from one controller while each retains its own fingerprint, cookies and proxy. | Mouse, keyboard, scrolling, Chinese text input, address-bar paste, tabs, multi-monitor support and grid layouts. |
+| **06 · AI automation** | Record actions as reusable Skills, use the built-in Agent to help adapt to page/element changes, or connect an external Agent through MCP. | Skill recording/playback, step debugging, element reselection, Agent MCP integration and four language SDKs. |
+
+Free fingerprint management covers everyday profile management and manual launches. Window synchronization, humanize, Skills and MCP concurrency follow account entitlements. Recording requires a supported HTML video player; text enhancements operate on actual DOM text, not OCR of images or Canvas content.
+
+## DETECTION MATRIX
+
+The following reproduces the website's comparison and browser implementation descriptions. The Chrome + Playwright column describes its reference configuration, not a fixed property of every Playwright setup.
+
+| Detection surface | Chrome + Playwright (website reference setup) | KingAI Browser | Implementation |
+| --- | --- | --- | --- |
+| reCAPTCHA v3 | **0.1 · bot** | **0.9 · human** | Server-verified result in a specific test environment. |
+| `navigator.webdriver` | `true` | `false` | Chromium / Blink source-level patches. |
+| UA / Client Hints | Browser-engine defaults | Consistent per-profile configuration | Cross-check UA, brand, version and platform. |
+| CDP Error stack detection | Can trigger detection hooks | Prevents detection side effects | V8 Inspector protection. |
+| Mouse-down signals | buttons / pressure often default to 0 | **buttons 1 · pressure 0.5** | Explicit browser input handling; values here describe left-button press. |
+| Mouse movement and clicks | Straight lines or fixed coordinates | Bézier curves and natural timing | Browser-layer humanize. |
+| Humanized typing | Text entered in one batch | Timing, mistakes and correction | Browser-layer humanize. |
+| Fingerprint configuration consistency | Requires manual assembly and maintenance | Validation across configuration surfaces | Source-level patches and startup validation. |
+
+**The website's 0.1 / 0.9 comparison was measured under specific configuration, network and test conditions. It is not an SDK test result or a guarantee of acceptance by any website, anti-fraud system or CAPTCHA.** Proxy quality, account history and actual behavior affect results; humanize requires valid account entitlement.
+
 ![KingAI fingerprint environment manager](images/manager-dashboard.png)
+
+Lifecycle update: Python launch contexts and Java automatic Session resource cleanup detach and preserve windows. Explicit browser shutdown uses Python close()/close_browser(), Node close()/closeBrowser(), Java closeBrowser(), or Go Close()/CloseBrowser(). New ownership cases and launch/doctor changes are unexecuted; the historical 17-test result does not cover them.
+
+After disconnecting, the original Session can no longer operate the retained window. Close it in Manager, or discover the real active session through a new client and explicitly attach if authorized. No automatic reconnection occurs. Java closeBrowser() throws SESSION_DISCONNECTED if its client is closed.
+
+## Quick entry and diagnostics
+
+```python
+from kingai_browser import launch
+
+with launch() as browser:
+    browser.new_tab("https://example.com")
+    print(browser.read())
+```
+
+Install the browser and sign in first. launch uses the existing unique default profile; context exit detaches and preserves the browser. See each SDK guide for its entry and explicit profile selection.
+
+```powershell
+python -m kingai_browser doctor
+node js/cli.mjs doctor
+```
+
+[Troubleshooting / 故障排查](TROUBLESHOOTING.md). The new entries and diagnostics have not been executed or validated in this change.
 
 ## Fingerprint environments + AI automation
 
@@ -84,7 +139,7 @@ New-Item -ItemType Directory -Force D:\code\kingai-sdk-temp | Out-Null
 $env:TEMP = 'D:\code\kingai-sdk-temp'
 $env:TMP = $env:TEMP
 python -m pip install --cache-dir D:\code\kingai-sdk-cache\pip .\python
-python .\python\examples\sync.py --live
+python .\python\examples\browser_form_automation.py --live
 ```
 
 ```python

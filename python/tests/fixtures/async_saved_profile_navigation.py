@@ -2,7 +2,7 @@ import asyncio
 from kingai_browser import AsyncKingAI
 
 async def run_sample(api):
-    browser = await api.start()  # unique existing 默认环境
+    browser = await api.start()  # the existing unique default profile
     await browser.new_tab("https://example.com")
     page = await browser.read()
     await browser.detach()

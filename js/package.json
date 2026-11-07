@@ -12,6 +12,6 @@
   "types": "./client.d.ts",
   "bin": { "kingai-browser": "./cli.mjs" },
   "exports": { ".": { "types": "./client.d.ts", "import": "./client.mjs" } },
-  "files": ["client.mjs", "client.d.ts", "cli.mjs", "discovery.mjs", "automation.mjs", "observation.mjs", "README.md", "LICENSE", "THIRD_PARTY_NOTICES.txt"],
+  "files": ["client.mjs", "client.d.ts", "cli.mjs", "doctor.mjs", "discovery.mjs", "automation.mjs", "observation.mjs", "README.md", "LICENSE", "THIRD_PARTY_NOTICES.txt"],
   "dependencies": { "@modelcontextprotocol/sdk": "^1.25.0" }
 }

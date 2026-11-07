@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "kingai-browser": {
+      "command": "D:\\Apps\\KingAIBrowser\\KingAIMcpServer.exe",
+      "args": []
+    }
+  }
+}

@@ -73,7 +73,7 @@ func Connect(ctx context.Context,o Options)(*Client,error){
  path,err:=Discover(o.MCPExecutable);if err!=nil{return nil,err}
  env,err:=environment(o);if err!=nil{return nil,err}
  timeout:=o.Timeout;if timeout==0{timeout=360*time.Second};if timeout<0{return nil,errors.New("timeout must be positive")}
- cmd:=exec.Command(path);cmd.Dir=filepath.Dir(path);cmd.Env=env;configureProcess(cmd)
+ cmd:=exec.Command(path);cmd.Dir=filepath.Dir(path);cmd.Env=env;cmd.Stderr=os.Stderr;configureProcess(cmd)
  sdk:=mcp.NewClient(&mcp.Implementation{Name:"kingai-go",Version:"0.3.0"},nil)
  // The protocol connection uses a lifetime context, not a handshake context
  // cancelled immediately after Connect returns.
@@ -129,9 +129,21 @@ func (c *Client) DeleteProfile(ctx context.Context,id string,confirm bool)(any,e
 func (c *Client) Sessions(ctx context.Context)(any,error){return c.Call(ctx,"browser_sessions_list",nil)}
 func (c *Client) RequestStatus(ctx context.Context,id string)(any,error){return c.Call(ctx,"runtime_request_status",Arguments{"request_id":id})}
 func clone(a Arguments)Arguments{b:=Arguments{};for k,v:=range a{b[k]=v};return b}
-type Session struct { Client *Client; ID string; Info any }
-func (c *Client) Start(ctx context.Context,options Arguments)(*Session,error){r,err:=c.Call(ctx,"browser_start",options);if err!=nil{return nil,err};m,ok:=r.(map[string]any);if !ok{return nil,&Error{Code:"INVALID_TOOL_RESPONSE",Message:"Start returned no session",OutcomeUnknown:true}};id,_:=m["sessionId"].(string);if id==""{return nil,&Error{Code:"INVALID_TOOL_RESPONSE",Message:"Start returned no sessionId",OutcomeUnknown:true}};return &Session{c,id,r},nil}
-func (c *Client) Attach(ctx context.Context,id string)(*Session,error){r,err:=c.Call(ctx,"browser_attach",Arguments{"session_id":id});if err!=nil{return nil,err};return &Session{c,id,r},nil}
+type Session struct { Client *Client; ID string; Info any; ownsClient bool }
+
+// Launch connects and opens a saved profile. An empty ID selects the existing default.
+func Launch(ctx context.Context, options Options, profileID string) (*Session, error) {
+ client, err := Connect(ctx, options)
+ if err != nil { return nil, err }
+ args := Arguments{}
+ if profileID != "" { args["profile_id"] = profileID }
+ browser, err := client.Start(ctx, args)
+ if err != nil { _ = client.Close(); return nil, err }
+ browser.ownsClient = true
+ return browser, nil
+}
+func (c *Client) Start(ctx context.Context,options Arguments)(*Session,error){r,err:=c.Call(ctx,"browser_start",options);if err!=nil{return nil,err};m,ok:=r.(map[string]any);if !ok{return nil,&Error{Code:"INVALID_TOOL_RESPONSE",Message:"Start returned no session",OutcomeUnknown:true}};id,_:=m["sessionId"].(string);if id==""{return nil,&Error{Code:"INVALID_TOOL_RESPONSE",Message:"Start returned no sessionId",OutcomeUnknown:true}};return &Session{Client:c,ID:id,Info:r},nil}
+func (c *Client) Attach(ctx context.Context,id string)(*Session,error){r,err:=c.Call(ctx,"browser_attach",Arguments{"session_id":id});if err!=nil{return nil,err};return &Session{Client:c,ID:id,Info:r},nil}
 func (s *Session) Call(ctx context.Context,name string,args Arguments)(any,error){a:=clone(args);a["session_id"]=s.ID;return s.Client.Call(ctx,name,a)}
 // Observe holds the same client lock across the operation AND all observation calls.
 func (s *Session) Observe(ctx context.Context,name string,args Arguments)(any,error){
@@ -142,8 +154,12 @@ func (s *Session) Observe(ctx context.Context,name string,args Arguments)(any,er
 }
 func (s *Session) Goto(ctx context.Context,url string)(any,error){return s.Call(ctx,"browser_navigate",Arguments{"url":url})}
 func (s *Session) NewTab(ctx context.Context,url string)(any,error){a:=Arguments{};if url!=""{a["url"]=url};return s.Call(ctx,"tabs_new",a)}
-func (s *Session) Click(ctx context.Context,ref string)(any,error){return s.Call(ctx,"browser_click",Arguments{"ref":ref})}
-func (s *Session) Fill(ctx context.Context,ref,text string)(any,error){return s.Call(ctx,"browser_fill",Arguments{"ref":ref,"text":text})}
+func (s *Session) Click(ctx context.Context,ref string,options ...Arguments)(any,error){a,e:=inputOptions(ref,options);if e!=nil{return nil,e};return s.Call(ctx,"browser_click",a)}
+func (s *Session) Fill(ctx context.Context,ref,text string,options ...Arguments)(any,error){a,e:=inputOptions(ref,options);if e!=nil{return nil,e};a["text"]=text;return s.Call(ctx,"browser_fill",a)}
+func inputOptions(ref string,options []Arguments)(Arguments,error){if len(options)>1{return nil,errors.New("provide at most one options object")};a:=Arguments{};if len(options)==1{a=clone(options[0])};a["ref"]=ref;return a,nil}
+func (s *Session) Type(ctx context.Context,ref,text string,options ...Arguments)(any,error){a,e:=inputOptions(ref,options);if e!=nil{return nil,e};a["text"]=text;return s.Call(ctx,"browser_type",a)}
+func (s *Session) Hover(ctx context.Context,ref string,options ...Arguments)(any,error){a,e:=inputOptions(ref,options);if e!=nil{return nil,e};return s.Call(ctx,"browser_hover",a)}
+func (s *Session) Wait(ctx context.Context,options Arguments)(any,error){return s.Call(ctx,"browser_wait",options)}
 func (s *Session) Read(ctx context.Context)(any,error){return s.Call(ctx,"browser_read",nil)}
 func (s *Session) Snapshot(ctx context.Context,args Arguments)(any,error){return s.Call(ctx,"browser_snapshot",args)}
 func (s *Session) Query(ctx context.Context,args Arguments)(any,error){return s.Call(ctx,"browser_query",args)}
@@ -151,5 +167,7 @@ func (s *Session) Tabs(ctx context.Context)(any,error){return s.Call(ctx,"tabs_l
 func (s *Session) ActivateTab(ctx context.Context,id string)(any,error){return s.Call(ctx,"tabs_activate",Arguments{"target_id":id})}
 func (s *Session) CloseTab(ctx context.Context,id string)(any,error){return s.Call(ctx,"tabs_close",Arguments{"target_id":id})}
 func (s *Session) Evaluate(ctx context.Context,expression string)(any,error){return s.Call(ctx,"browser_evaluate",Arguments{"expression":expression})}
-func (s *Session) Detach(ctx context.Context)(any,error){return s.Call(ctx,"browser_detach",nil)}
-func (s *Session) Close(ctx context.Context)(any,error){return s.Call(ctx,"browser_close",nil)}
+func (s *Session) Detach(ctx context.Context)(any,error){v,e:=s.Call(ctx,"browser_detach",nil);if s.ownsClient{e=errors.Join(e,s.Client.Close())};return v,e}
+func (s *Session) Close(ctx context.Context)(any,error){v,e:=s.Call(ctx,"browser_close",nil);if s.ownsClient{e=errors.Join(e,s.Client.Close())};return v,e}
+func (s *Session) Disconnect()error{if !s.ownsClient{return errors.New("session does not own its client")};return s.Client.Close()}
+func (s *Session) CloseBrowser(ctx context.Context)(any,error){return s.Close(ctx)}

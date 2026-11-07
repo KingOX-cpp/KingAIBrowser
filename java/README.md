@@ -6,6 +6,28 @@ English | [简体中文](README.zh-CN.md) | [Project / 项目](../README.md)
 
 Calls the installed KingAI MCP over stdio. No HTTP service or Playwright is required. Install the browser, sign in and use matching MCP/Runtime components first.
 
+Lifecycle update: Python launch contexts and Java automatic Session resource cleanup detach and preserve windows. Explicit browser shutdown uses Python close()/close_browser(), Node close()/closeBrowser(), Java closeBrowser(), or Go Close()/CloseBrowser(). New ownership cases and launch/doctor changes are unexecuted; the historical 17-test result does not cover them.
+
+After disconnecting, the original Session can no longer operate the retained window. Close it in Manager, or discover the real active session through a new client and explicitly attach if authorized. No automatic reconnection occurs. Java closeBrowser() throws SESSION_DISCONNECTED if its client is closed.
+
+## Quick entry: launch
+
+After installation and login, this entry discovers/connects MCP and starts a saved profile. The default must already exist; no missing-profile fallback is created.
+
+```java
+import cn.kingaibrowser.sdk.KingAI;
+
+try (KingAI.Session browser = KingAI.launch()) {
+    browser.newTab("https://example.com");
+    System.out.println(browser.read());
+}
+// Explicit profile: KingAI.launch(new KingAI.Options(), profileId)
+```
+
+The returned session owns its new client. Session.close() performs automatic cleanup: it detaches an owned launch session and releases MCP while preserving the browser. closeBrowser() explicitly closes the browser. detach() preserves the browser and releases an owned connection; disconnect() only releases that connection. Explicit-client APIs remain available.
+
+[Troubleshooting / 故障排查](../TROUBLESHOOTING.md)
+
 ## Installation and discovery
 
 ```powershell
@@ -76,7 +98,7 @@ Every installed tool is available through generic `call` / `Call`; convenience m
 
 ## Lifecycle, errors and permissions
 
-- Client close disconnects MCP; session close closes the browser. Detach keeps the browser available. / 客户端关闭、会话断开和浏览器关闭含义不同。
+- Client close disconnects MCP; Session.close() detaches an owned launch session and preserves its browser. Only closeBrowser() explicitly closes the browser. / 客户端 close 断开 MCP；Session.close() 清理 owned launch 会话并保留窗口，显式关浏览器使用 closeBrowser()。
 - Default start requires an existing unique 默认环境; it does not create one. / 默认启动不会自动创建缺失环境。
 - Update only closed profiles; deletion requires explicit confirmation and removes persistent data. / 更新前关闭环境；删除需确认且会移除持久数据。
 - Side effects are not automatically retried after timeout or observation failure. / 超时和观察失败不自动重放输入。

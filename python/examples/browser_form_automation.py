@@ -1,7 +1,6 @@
 """Create/configure a saved profile and submit a local form using observed DOM refs.
 
-中文：同步完整示例。获取环境列表、设置新环境、观察 DOM、输入、点击并确认结果。
-English: synchronous end-to-end example; no third-party form submission.
+synchronous end-to-end example; no third-party form submission.
 Prerequisite: serve examples/demo.html on port 8765, install the SDK and sign in.
 Run from repository root: python python/examples/browser_form_automation.py --live
 The new profile and browser window are retained after the example finishes.
@@ -34,7 +33,6 @@ def run_workflow(api):
     created = api.create_profile(name, language="en-US")
     profile_id = created["profileId"]
     # Settings must be saved BEFORE starting the environment.
-    # 修改必须在启动之前完成；本例只修改刚创建的环境，不影响用户原有环境。
     api.update_profile(profile_id, name=name + " configured")
     print("Configured environment:", api.profile(profile_id))
 
@@ -46,12 +44,10 @@ def run_workflow(api):
         print("Bounded DOM inventory:", browser.query(limit=30, include_html=True, max_chars=12000))
 
         # Query again immediately before each action; do not invent or persist refs.
-        # 每次从当前页面查询唯一元素，再用服务器返回的 ref 输入或点击。
         browser.fill(ref=one_ref(browser, "#name"), text="KingAI Python", humanize=False)
         browser.fill(ref=one_ref(browser, "#message"), text="Hello from the Python SDK", humanize=False)
         browser.click(ref=one_ref(browser, "#submit"), humanize=False)
         # Dispatched != submitted: independently wait for a visible business result.
-        # 工具返回“已派发”不等于业务成功，必须等待提交标记并核对文本。
         browser.wait(selector='#result[data-submitted="true"]', text="Submitted: KingAI Python", timeout_ms=10000)
         result = browser.evaluate("document.querySelector('#result').textContent")
         expected = "Submitted: KingAI Python | Hello from the Python SDK"

@@ -9,18 +9,25 @@ These examples go beyond opening a tab. Each full workflow lists environments, c
 | Language | Complete workflow | Minimal connection sample |
 | --- | --- | --- |
 | Python | [browser_form_automation.py](../python/examples/browser_form_automation.py) | [async_browser_form_automation.py](../python/examples/async_browser_form_automation.py) |
-| Node.js | [browser_form_automation.mjs](../js/examples/browser_form_automation.mjs) | [node.mjs](../js/examples/saved_profile_quickstart.mjs) |
+| Node.js | [browser_form_automation.mjs](../js/examples/browser_form_automation.mjs) | [saved_profile_quickstart.mjs](../js/examples/saved_profile_quickstart.mjs) |
 | Java | [Workflow.java](../java/src/main/java/cn/kingaibrowser/sdk/samples/Workflow.java) | [Sample.java](../java/src/main/java/cn/kingaibrowser/sdk/samples/Sample.java) |
 | Go | [workflow/main.go](../go/examples/workflow/main.go) | [basic/main.go](../go/examples/basic/main.go) |
 
 ## Choose by task / 按任务选择
+
+- [Reuse saved login state / 复用已有登录态](../python/examples/reuse_saved_profile.py): opens an explicitly selected saved identity without resetting cookies or promising an expired login will recover.
+- [Inspect fingerprint signals / 指纹信号观察](../python/examples/inspect_fingerprint_signals.py): reads selected Navigator, timezone, screen and WebGL values; no universal pass/fail claim.
+- [Multiple environments / 多环境共存](../python/examples/open_multiple_environments.py): opens distinct saved profiles sequentially and retains concurrent windows within account limits; does not bypass quotas or concurrently input into one selected tab.
+- [Agent stdio MCP integration / Agent 接入](integrations/README.md): a configuration template, prerequisites and verification steps, without raw CDP.
 
 - [Profile management / 环境管理](../python/examples/profile_management.py): list, create, get, rename, patch locale, optionally delete only the newly created profile. No browser is launched.
 - [Tool catalog / 全接口目录](../python/examples/mcp_tool_catalog.py): enumerate every installed tool and required parameter schema. Read-only, no tool execution.
 - [Synchronous form / 同步表单](../python/examples/browser_form_automation.py): create an environment and perform DOM-driven input/click/result confirmation.
 - [Asynchronous form / 异步表单](../python/examples/async_browser_form_automation.py): the same business interaction using sequential awaits and explicit ownership.
 - [API recipes / 分类接口调用手册](../docs/API_EXAMPLES.md): profile CRUD, sessions, tabs, DOM pagination, click/fill/type/key/scroll/hover, evaluation, artifacts, upload/download, cookies/storage, Skills and errors, with generic invocation syntax for all four languages.
-- Node.js equivalents: [profile_management.mjs](../js/examples/profile_management.mjs), [mcp_tool_catalog.mjs](../js/examples/mcp_tool_catalog.mjs), [browser_form_automation.mjs](../js/examples/browser_form_automation.mjs).
+- Node.js environment/form/catalog examples (not equivalents of the four new tasks): [profile_management.mjs](../js/examples/profile_management.mjs), [mcp_tool_catalog.mjs](../js/examples/mcp_tool_catalog.mjs), [browser_form_automation.mjs](../js/examples/browser_form_automation.mjs).
+
+The four new task examples above currently have Python implementations plus a language-independent Agent MCP configuration template. They are not supplied as matching JavaScript, Java and Go programs. / 上面四类新任务目前提供 Python 实现及与语言无关的 Agent 配置模板，尚未提供对应的 JavaScript、Java、Go 程序。
 
 The previous short Python navigation snippets are now internal fixture-test inputs under python/tests/fixtures/, not the recommended public examples. File names describe the task instead of only naming sync/async execution modes.
 

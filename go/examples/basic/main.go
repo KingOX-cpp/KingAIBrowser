@@ -17,5 +17,5 @@ func main(){
  if err=run(ctx,api);err!=nil{log.Print(err)}
 }
 func run(ctx context.Context,api *kingai.Client)error{
- result,err:=sample.RunSample(ctx,api,"Go SDK 演示");if err!=nil{return err};fmt.Println(result);return nil
+ result,err:=sample.RunSample(ctx,api,"Go SDK example");if err!=nil{return err};fmt.Println(result);return nil
 }

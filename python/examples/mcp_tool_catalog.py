@@ -1,7 +1,6 @@
 """Inspect every installed MCP tool and its authoritative input schema.
 
-中文：只读接口目录；不打开浏览器，不执行目录中的工具。
-English: read-only catalog, not a script that blindly executes every tool.
+read-only catalog, not a script that blindly executes every tool.
 Run: python python/examples/mcp_tool_catalog.py --tool browser_query
 Omit --tool to print all tool schemas. Requires compatible installed KingAI MCP.
 """
@@ -17,7 +16,7 @@ def main():
     args = parser.parse_args()
     with KingAI(args.executable) as api:
         # tools() handles server pagination; output includes required properties.
-        # 不以某个 SDK 版本的固定工具清单代替当前安装版的 schema。
+        # Use installed schemas rather than a fixed tool list from a particular SDK version.
         tools = api.tools()
         selected = [item for item in tools if not args.tool or item["name"] == args.tool]
         if not selected:

@@ -87,7 +87,7 @@ public final class KingAI implements AutoCloseable {
     public KingAI(Options options) throws IOException {
         if(options.timeout==null||options.timeout.isNegative()||options.timeout.isZero())throw new IllegalArgumentException("timeout must be positive");
         timeout=options.timeout;Path path=discover(options.mcpExecutable);
-        ProcessBuilder builder=new ProcessBuilder(path.toString()).directory(path.getParent().toFile()).redirectError(ProcessBuilder.Redirect.DISCARD);
+        ProcessBuilder builder=new ProcessBuilder(path.toString()).directory(path.getParent().toFile()).redirectError(ProcessBuilder.Redirect.INHERIT);
         configureEnvironment(builder.environment(),options);process=builder.start();
         ThreadFactory threads=r->{Thread t=new Thread(r,"kingai-mcp-writer");t.setDaemon(true);return t;};
         writer=new ThreadPoolExecutor(1,1,0,TimeUnit.SECONDS,new ArrayBlockingQueue<>(64),threads,new ThreadPoolExecutor.AbortPolicy());
@@ -187,7 +187,18 @@ public final class KingAI implements AutoCloseable {
     public Session attach(String id){return new Session(this,id,call("browser_attach",Map.of("session_id",id)));}
     private static Map<String,Object> copy(Map<String,?> source){Map<String,Object>a=new LinkedHashMap<>();if(source!=null)a.putAll(source);return a;}
 
-    public static final class Session {
+    public static Session launch() throws IOException { return launch(new Options(), null); }
+    public static Session launch(Options options, String profileId) throws IOException {
+        KingAI api = new KingAI(options);
+        try {
+            Session browser = api.start(profileId == null ? Map.of() : Map.of("profile_id", profileId));
+            browser.ownsClient = true;
+            return browser;
+        } catch (RuntimeException error) { api.close(); throw error; }
+    }
+
+    public static final class Session implements AutoCloseable {
+        private boolean ownsClient;
         public final KingAI client; public final String sessionId; public final JsonNode info;
         private Session(KingAI client,String id,JsonNode info){this.client=client;this.sessionId=id;this.info=info;}
         public JsonNode call(String name,Map<String,?> options){Map<String,Object>a=copy(options);a.put("session_id",sessionId);return client.call(name,a);}
@@ -205,7 +216,14 @@ public final class KingAI implements AutoCloseable {
         public JsonNode activateTab(String id){return call("tabs_activate",Map.of("target_id",id));}
         public JsonNode closeTab(String id){return call("tabs_close",Map.of("target_id",id));}
         public JsonNode click(String ref){return call("browser_click",Map.of("ref",ref));}
+        public JsonNode click(String ref,Map<String,?> options){Map<String,Object>a=copy(options);a.put("ref",ref);return call("browser_click",a);}
         public JsonNode fill(String ref,String text){return call("browser_fill",Map.of("ref",ref,"text",text));}
+        public JsonNode fill(String ref,String text,Map<String,?> options){Map<String,Object>a=copy(options);a.put("ref",ref);a.put("text",text);return call("browser_fill",a);}
+        public JsonNode type(String ref,String text,Map<String,?> options){Map<String,Object>a=copy(options);a.put("ref",ref);a.put("text",text);return call("browser_type",a);}
+        public JsonNode type(String ref,String text){return type(ref,text,Map.of());}
+        public JsonNode hover(String ref,Map<String,?> options){Map<String,Object>a=copy(options);a.put("ref",ref);return call("browser_hover",a);}
+        public JsonNode hover(String ref){return hover(ref,Map.of());}
+        public JsonNode waitFor(Map<String,?> options){return call("browser_wait",options);}
         public JsonNode read(){return call("browser_read",Map.of());}
         public JsonNode snapshot(Map<String,?> args){return call("browser_snapshot",args);}
         public JsonNode query(Map<String,?> args){return call("browser_query",args);}
@@ -226,9 +244,12 @@ public final class KingAI implements AutoCloseable {
         public JsonNode storage(Map<String,?> options){return call("storage_get",options);}
         public JsonNode upload(String ref,List<String> paths){return call("browser_upload",Map.of("ref",ref,"paths",paths));}
         public JsonNode download(String ref){return call("browser_download",Map.of("ref",ref));}
-        public JsonNode detach(){return call("browser_detach",Map.of());}
+        public JsonNode detach(){try{return call("browser_detach",Map.of());}finally{if(ownsClient)client.close();}}
+        public void disconnect(){if(!ownsClient)throw new IllegalStateException("Session does not own its client");client.close();}
+        /** Automatic resource cleanup preserves the browser and only owns launch clients. */
+        @Override public void close(){if(ownsClient&&!client.closed)detach();}
         /** Explicitly closes this browser, unlike client.close(). */
-        public JsonNode closeBrowser(){return call("browser_close",Map.of());}
+        public JsonNode closeBrowser(){if(client.closed)throw failure("SESSION_DISCONNECTED","This session is disconnected; use Manager or explicitly attach a new authorized client to the active session",false);try{return call("browser_close",Map.of());}finally{if(ownsClient)client.close();}}
     }
     @Override public synchronized void close() {
         if(closed)return;closed=true;writer.shutdownNow();failPending(new IOException("Client closed"));

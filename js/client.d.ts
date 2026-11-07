@@ -10,6 +10,8 @@ export interface InputOptions extends Arguments { ref?: string; frame_id?: strin
 export interface Observation { operationStatus: string; operationResult: unknown; businessOutcome: 'not_verified'; observationStatus: 'captured'|'unavailable'; observation?: Arguments; observationError?: Arguments }
 export class KingAIError extends Error { code: string; details: Arguments; constructor(details: Arguments) }
 export function discoverMcp(executable?: string): Promise<string>;
+export interface LaunchOptions extends Options { profileId?: string; headless?: boolean; temporary?: boolean }
+export function launch(options?: LaunchOptions): Promise<BrowserSession>;
 export class KingAI {
   constructor(options?: Options);
   serverInfo?: Arguments;
@@ -45,7 +47,7 @@ export class BrowserSession {
   hover(selector?:string,options?:InputOptions):Promise<unknown>;
   pdf(options?:Arguments):Promise<unknown>; cookies():Promise<unknown>; storage(options?:Arguments):Promise<unknown>;
   upload(paths:string[],selector?:string,options?:Arguments):Promise<unknown>;
-  download(selector?:string,options?:Arguments):Promise<unknown>; detach():Promise<unknown>; close():Promise<unknown>;
+  download(selector?:string,options?:Arguments):Promise<unknown>; disconnect():Promise<void>; detach():Promise<unknown>; close():Promise<unknown>; closeBrowser():Promise<unknown>;
 }
 export class BrowserAutomation {
   constructor(options?:Options & {profile_id?:string;session_id?:string;headless?:boolean});

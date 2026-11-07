@@ -166,6 +166,27 @@ class BrowserSession:
         if not isinstance(session_id, str) or not session_id:
             raise ValueError("session_id must be a non-empty string")
         self.client, self.session_id, self.info = client, session_id, info
+        self._owns_client = False
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self._owns_client and not self.client._closed:
+            try:
+                self.detach()
+            except Exception as cleanup_error:
+                if exc_value is None:
+                    raise
+                # Preserve the original body failure if cleanup also fails.
+                if hasattr(exc_value, "add_note"):
+                    exc_value.add_note("Session detach also failed: " + str(cleanup_error))
+
+    def disconnect(self):
+        """Disconnect an owned launch connection without closing the browser."""
+        if not self._owns_client:
+            raise ValueError("This session does not own its client; close the client explicitly")
+        self.client.close()
 
     def call(self, name, *, observe=False, **arguments):
         # Cover action AND observation; another thread must not switch tabs
@@ -262,11 +283,43 @@ class BrowserSession:
         return self.call("browser_download", **options)
 
     def detach(self):
-        return self.call("browser_detach")
+        try:
+            return self.call("browser_detach")
+        finally:
+            if self._owns_client:
+                self.client.close()
 
     def close(self):
         """Explicitly close the browser; connection cleanup does not call this."""
-        return self.call("browser_close")
+        try:
+            return self.call("browser_close")
+        finally:
+            if self._owns_client:
+                self.client.close()
+
+    def close_browser(self):
+        """Explicit browser-close alias, distinct from automatic context cleanup."""
+        return self.close()
+
+
+def launch(profile_id=None, *, headless=False, temporary=False, **client_options):
+    """Connect and open a saved environment; the returned session owns its client.
+
+    Omit profile_id for the existing unique default profile. No missing-profile
+    fallback is created. Context exit detaches and preserves the browser.
+    close()/close_browser() explicitly close it; detach() preserves it.
+    """
+    api = KingAI(**client_options)
+    try:
+        browser = api.start(profile_id, headless=headless, temporary=temporary)
+        browser._owns_client = True
+        return browser
+    except BaseException:
+        api.close()
+        raise
+
+
+__all__.append("launch")
 
 # Optional high-level action/observation facade; no OpenManus dependency.
 from _kingai_automation import BrowserAutomation
@@ -280,12 +333,23 @@ def main():
     import argparse
     import json
     parser = argparse.ArgumentParser(description="KingAI SDK diagnostics (no browser launch)")
-    parser.add_argument("command", choices=["info", "tools", "profiles"], nargs="?", default="info")
+    parser.add_argument("command", choices=["info", "tools", "profiles", "doctor"], nargs="?", default="info")
     parser.add_argument("--executable", help="Absolute installed MCP executable path")
     args = parser.parse_args()
+    if args.command == "doctor":
+        from _kingai_doctor import doctor
+        report = doctor(args.executable, client_factory=KingAI, client_version=__version__)
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        return 0 if report["status"] != "error" else 1
     try:
         with KingAI(args.executable) as api:
-            value = {"clientVersion": __version__, "mcp": api.server_info, "api": api.info()} if args.command == "info" else getattr(api, args.command)()
+            if args.command == "info":
+                available = {tool["name"] for tool in api.tools()}
+                value = {"clientVersion": __version__, "mcp": api.server_info,
+                         "api": api.info() if "sdk_info" in available else None,
+                         "compatibilityNote": None if "sdk_info" in available else "Older MCP: sdk_info is unavailable; inspect tools for supported capabilities"}
+            else:
+                value = getattr(api, args.command)()
             print(json.dumps(value, ensure_ascii=False, indent=2))
     except KingAIError as error:
         print(json.dumps(error.details, ensure_ascii=False))
