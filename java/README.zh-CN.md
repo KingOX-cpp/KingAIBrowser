@@ -12,6 +12,8 @@
 
 四语言入口总览：[launch、显式客户端和 Agent facade 的区别与用法](../docs/SDK_ENTRY_POINTS.zh-CN.md)。Python/Node 提供 BrowserAutomation，Java/Go 当前未提供同名封装；普通会话与通用 MCP 调用四种语言均支持。
 
+下载进度：本地源码已支持显式开启 stderr 进度，Node CLI 默认开启。具体参数见[安装说明](../INSTALLATION.zh-CN.md)。本轮未构建、测试或发布此语言的修改。
+
 ## 浏览器下载安装
 
 支持 Windows Intel/AMD x64 和 Apple 芯片 Mac，不支持 Windows ARM、32 位 Windows 或 Intel Mac。四语言均提供原生下载实现；显式安装命令可下载并打开安装向导/DMG，仍需用户完成安装，不是静默安装。
@@ -22,7 +24,7 @@ var result = cn.kingaibrowser.sdk.KingAI.install(null, true, null);
 System.out.println(result.installerPath());
 ```
 
-Windows 默认下载到 D 盘；下载目录不是浏览器安装目录。证书校验保持开启，IP 证书不可信或不匹配会失败；可传可信 SHA-256 校验文件。安装后打开 Manager 登录并运行 doctor。新增下载/安装入口本轮未下载或执行安装包，未运行构建、检查或测试。
+Windows 和 macOS 安装包默认下载到系统临时目录；下载目录不是浏览器安装目录。证书校验保持开启，IP 证书不可信或不匹配会失败；可传可信 SHA-256 校验文件。安装后打开 Manager 登录并运行 doctor。新增下载/安装入口本轮未下载或执行安装包，未运行构建、检查或测试。
 
 [完整安装说明](../INSTALLATION.zh-CN.md)
 

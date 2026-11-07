@@ -11,11 +11,33 @@ Python、Node.js、Java、Go 均使用各自语言的下载实现；Java/Go/Node
 
 Apple 芯片上的 Rosetta 进程会尝试识别实际硬件。Linux 不适用这两个安装包。
 
+## 在线安装
+
+Python 和 Node.js SDK 均已发布，可以直接在线安装，无需先克隆本仓库。
+
+Python：
+
+```shell
+pip install kingai-browser
+python -m kingai_browser install
+```
+
+Node.js / TypeScript（两条命令均在你的调用项目目录中运行）：
+
+```shell
+npm install @kingaibrowser/browser-api
+npx kingai-browser install
+```
+
+第一条安装 SDK，第二条显式下载并打开浏览器安装界面。安装包默认下载到系统临时目录，由用户自行完成安装，再打开 Manager 登录；已有安装可能直接复用。这不是静默安装。Node.js 要求 22 或以上版本，npx 应在已安装该包的项目目录运行，以使用本地 kingai-browser 命令。
+
+[PyPI 包主页](https://pypi.org/project/kingai-browser/) · [npm 包主页](https://www.npmjs.com/package/@kingaibrowser/browser-api) · [完整安装说明](INSTALLATION.zh-CN.md)
+
 ## “自动安装”具体做什么
 
 接口会自动下载，并可启动 Windows 安装向导或打开 Mac DMG。**目前不是静默、无人值守安装**：请在系统界面中完成安装或 DMG 拖放步骤。没有猜测安装器参数，不自动提权、不覆盖已有应用、不绕过 Gatekeeper。安装后打开 Manager 并登录，让管理器登记 MCP 路径，再运行 doctor。
 
-下载目录不等于浏览器安装目录。Windows 默认下载到 `D:\code\KingAIBrowser-downloads`，Mac 默认到 `~/Downloads/KingAIBrowser`，每次下载创建独立子目录。失败会移除本次未完成的文件，不覆盖之前的安装包或浏览器用户数据；完整安装包不自动删除。
+下载目录不等于浏览器安装目录。Windows 和 Mac 默认使用系统临时目录，每次下载创建独立子目录。失败会移除本次未完成的文件，不覆盖之前的安装包或浏览器用户数据；完整安装包不自动删除。
 
 返回状态：
 
@@ -25,8 +47,22 @@ Apple 芯片上的 Rosetta 进程会尝试识别实际硬件。Linux 不适用�
 
 ## Python
 
+Python 0.3.3 CLI 新增下载进度：默认在 stderr 显示下载大小、服务器提供的总大小、百分比、速度、耗时和预计剩余时间。总大小未知时不编造百分比；终端约每秒更新，重定向日志约每 5 秒输出一行，stdout 保持 JSON 返回。开始连接、文件校验、启动安装器也有状态提示。
+
+不再设置 10 分钟总下载期限。`--network-timeout 60` 可调整每次网络操作的超时秒数，不代表总时长；`--quiet` 关闭进度。程序调用 `install()` 默认安静，可传 `progress=True, network_timeout=60` 开启。进度功能不代表 CDN 下载速度提升，实际速度仍取决于服务端与网络。Python 0.3.3 已通过 12 项模拟安装器测试、构建及元数据检查、独立安装与 CLI 检查并上传 PyPI，未下载或启动真实浏览器安装器。
+
 ```powershell
-python -m kingai_browser install --download-dir D:\code\KingAIBrowser-downloads
+python -m kingai_browser install --network-timeout 60
+python -m kingai_browser install --download-only --quiet
+```
+
+```python
+from kingai_browser import install
+result = install(progress=True, network_timeout=60)
+```
+
+```powershell
+python -m kingai_browser install
 python -m kingai_browser install --download-only
 python -m kingai_browser install --no-reuse-existing
 ```
@@ -34,7 +70,7 @@ python -m kingai_browser install --no-reuse-existing
 ```python
 from kingai_browser import install
 
-result = install(download_dir=r"D:\code\KingAIBrowser-downloads", download_only=True)
+result = install(download_only=True)
 print(result["status"], result["installerPath"])
 ```
 
@@ -42,12 +78,18 @@ print(result["status"], result["installerPath"])
 
 ## Node.js / TypeScript
 
+本地源码新增 `progress: true` 与 `networkTimeoutMs`（默认 30000 毫秒）。CLI install 默认显示进度，`--quiet` 关闭，`--network-timeout 60` 指定网络等待超时秒数；取消固定 10 分钟总期限。Node 包已发布 npm；本轮文档更新未构建或测试 Node 包。
+
+```javascript
+const result = await install({ progress: true, downloadOnly: true, networkTimeoutMs: 60000 });
+```
+
 ```powershell
-node js/cli.mjs install --download-only --download-dir D:\code\KingAIBrowser-downloads
+node js/cli.mjs install --download-only
 ```
 
 ```javascript
-import { install } from '@kingai/browser-api';
+import { install } from '@kingaibrowser/browser-api';
 const result = await install({ downloadOnly: true });
 console.log(result.status, result.installerPath);
 ```
@@ -55,6 +97,8 @@ console.log(result.status, result.installerPath);
 参数为 `downloadDir`、`downloadOnly`、`sha256`；`downloadOnly` 默认 false，会打开安装器。
 
 ## Java
+
+本地源码新增保留兼容性的重载：`KingAI.install(null, true, null, true)` 只下载并显示进度，第二个参数改 false 会在下载后打开安装器。也可用 `BrowserInstaller.download(null, null, true)` 只下载。进度输出到 stderr，阻塞等待数据时仍定时反馈。本轮 Java 修改未构建、测试或发布。
 
 ```java
 import cn.kingaibrowser.sdk.BrowserInstaller;
@@ -69,6 +113,14 @@ System.out.println(result.status() + ": " + result.installerPath());
 `KingAI.install(downloadDir, downloadOnly, expectedSha256)` 第一个参数是绝对 Path，null 使用平台默认目录。只下载可用 `BrowserInstaller.download`；之后可显式调用 `openInstaller`。请妥善保管文件，避免在不可信目录中被替换。
 
 ## Go
+
+本地源码新增 `Progress: true` 和 `NetworkTimeout: 60*time.Second`。进度输出到 stderr；取消固定 10 分钟总期限，保留网络空闲超时以及调用方 context 取消/期限。本轮 Go 修改未构建或测试。
+
+```go
+result, err := kingai.Install(ctx, kingai.InstallOptions{
+    DownloadOnly: true, Progress: true, NetworkTimeout: 60 * time.Second,
+})
+```
 
 ```go
 // Inside a function returning error, with ctx, kingai and fmt available.

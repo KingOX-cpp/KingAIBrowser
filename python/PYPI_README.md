@@ -28,7 +28,7 @@ result = install(download_only=True)
 print(result["status"], result["installerPath"])
 ```
 
-Windows downloads default to D:\code\KingAIBrowser-downloads; macOS uses ~/Downloads/KingAIBrowser. Set download_dir to an absolute path to change installer storage. It does not select the browser installation folder. HTTPS certificate verification remains enabled; IP certificate mismatches fail. Optional sha256 compares the installer to a trusted checksum supplied by the caller. A calculated hash alone is not authenticity verification.
+Installer downloads use the system temporary directory on Windows and macOS. Set download_dir to an absolute path to change installer storage. It does not select the browser installation folder. HTTPS certificate verification remains enabled; IP certificate mismatches fail. Optional sha256 compares the installer to a trusted checksum supplied by the caller. A calculated hash alone is not authenticity verification.
 
 ## Locate MCP and diagnose
 

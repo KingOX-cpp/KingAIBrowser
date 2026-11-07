@@ -31,7 +31,7 @@ with launch() as browser:
 Node.js:
 
 ```javascript
-import { launch } from '@kingai/browser-api';
+import { launch } from '@kingaibrowser/browser-api';
 const browser = await launch();
 try {
   await browser.newTab('https://example.com');
@@ -98,7 +98,7 @@ with BrowserAutomation() as agent:
 Node.js:
 
 ```javascript
-import { BrowserAutomation } from '@kingai/browser-api';
+import { BrowserAutomation } from '@kingaibrowser/browser-api';
 const agent = new BrowserAutomation();
 try {
   await agent.execute('go_to_url', { url: 'https://example.com' });

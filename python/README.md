@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md) | [Project / 项目](../README.md)
 
-**SDK 0.3.0 · MIT · Python 3.10+**
+**SDK 0.3.3 · MIT · Python 3.10+**
 
 **New to the API? Read [launch vs KingAI vs BrowserAutomation](ENTRY_POINTS.md)** for entry-point selection, full examples, DOM/state differences and a connection/window lifecycle table. [中文详细说明](ENTRY_POINTS.zh-CN.md).
 
@@ -30,7 +30,7 @@ result = install(download_only=True)
 print(result["status"], result["installerPath"])
 ```
 
-Windows downloads default to D:. The download directory is not the browser installation directory. TLS verification stays enabled; invalid/mismatched IP certificates fail. Supply a trusted SHA-256 to verify the payload. After installation, open Manager, sign in and run doctor. No installer was downloaded or executed, and no build/check/test was run in this change.
+Installer downloads default to the system temporary directory on Windows and macOS. The download directory is not the browser installation directory. TLS verification stays enabled; invalid/mismatched IP certificates fail. Supply a trusted SHA-256 to verify the payload. After installation, open Manager, sign in and run doctor. No installer was downloaded or executed, and no build/check/test was run in this change.
 
 [Full installation guide](../INSTALLATION.md)
 
@@ -71,7 +71,7 @@ python -m pip install --cache-dir D:/code/kingai-sdk-cache/pip ./python
 $env:KINGAI_MCP_EXECUTABLE = 'D:\Apps\KingAIBrowser\KingAIMcpServer.exe'
 ```
 
-Replace the example path. Discovery uses an explicit SDK option, then the environment variable, then the Manager record. Do not pass the main browser executable. Python SDK 0.3.0 is available on [PyPI](https://pypi.org/project/kingai-browser/0.3.0/): `python -m pip install kingai-browser`. Publication caches and outputs for this release were kept under F:\kingai-pypi.
+Replace the example path. Discovery uses an explicit SDK option, then the environment variable, then the Manager record. Do not pass the main browser executable. Python SDK 0.3.3 is available on [PyPI](https://pypi.org/project/kingai-browser/0.3.3/): `python -m pip install kingai-browser`. Publication caches and outputs for this release were kept under F:\kingai-pypi.
 
 ## Start with a complete example
 

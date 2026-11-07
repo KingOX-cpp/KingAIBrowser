@@ -1,5 +1,13 @@
 # Source installation and release status
 
+Python 0.3.3 adds stderr progress (size, percentage when known, speed, elapsed time and ETA), removes the ten-minute total download deadline, and adds --quiet / --network-timeout. Python and Node.js packages are now published on PyPI and npm. Java/Go progress implementations remain local source changes. This documentation update did not build or test any SDK.
+
+## Python 0.3.2: system temporary downloads
+
+The installer now defaults to the operating system's temporary directory on Windows and macOS. It does not require D:, a code/ directory or any developer-specific installation path. Downloads still open the native installer/DMG UI by default; the user chooses/completes installation. Version 0.3.1 used per-user storage and remains an immutable historical release. Java/Go/Node source defaults were aligned, without building or testing those languages in this change.
+
+Python validation: 5 installer regression tests using fake download/process responses, source/wheel build, Twine metadata checks and isolated installation/import passed. No browser installer was downloaded or executed. Release caches and outputs remain under F:\kingai-pypi on the publisher's machine; this does not determine end-user defaults.
+
 [English](README.md) · [中文](README.zh-CN.md) · [Samples/tests](SAMPLES.md)
 
 SDK version: **0.3.0**. API contract: **1**. This repository publishes source code, not browser binaries or native MCP/Runtime components.
@@ -8,8 +16,8 @@ SDK version: **0.3.0**. API contract: **1**. This repository publishes source co
 
 | SDK | Source location | Package identity | Distribution status |
 | --- | --- | --- | --- |
-| Python | python/ | kingai-browser | PyPI 0.3.0 published on 2026-11-07; online install/import verified |
-| Node.js / TypeScript | js/ | @kingai/browser-api | Local package install; no npm release |
+| Python | python/ | kingai-browser | PyPI 0.3.3 published on 2026-11-07; installer progress regressions and online CLI checks passed |
+| Node.js / TypeScript | js/ | @kingaibrowser/browser-api | npm 0.3.0 published; online installation available |
 | Java | java/ | cn.kingaibrowser.sdk:kingai-browser:0.3.0 | Local Maven install; no Maven Central release |
 | Go | go/ | github.com/KingOX-cpp/KingAIBrowser/go | Local replace supported; no version tag claimed |
 

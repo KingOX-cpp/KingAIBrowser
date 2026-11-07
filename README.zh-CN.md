@@ -10,7 +10,29 @@ KingAI Browser 将**持久化指纹环境、Chromium/Blink 源码级修改、浏
 
 **SDK 0.3.0 · MIT 开源协议 · 无需 Playwright · 无需 HTTP 服务**
 
-本仓库开源客户端 SDK、调用示例和测试。浏览器可从[官方网站](https://www.kingaibrowser.cn/)、[备用网站](https://kingaibrowser.ccwu.cc/)或 [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases) 下载。Python SDK 0.3.0 已[发布到 PyPI](https://pypi.org/project/kingai-browser/0.3.0/)，可运行 `python -m pip install kingai-browser` 在线安装；npm、Maven 公共包尚未发布。
+本仓库开源客户端 SDK、调用示例和测试。浏览器可从[官方网站](https://www.kingaibrowser.cn/)、[备用网站](https://kingaibrowser.ccwu.cc/)或 [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases) 下载。Python SDK 0.3.3 已[发布到 PyPI](https://pypi.org/project/kingai-browser/0.3.3/)，可运行 `python -m pip install kingai-browser` 在线安装；Node.js SDK 也已[发布到 npm](https://www.npmjs.com/package/@kingaibrowser/browser-api)；Maven 公共包尚未发布。
+
+## 在线安装
+
+Python 和 Node.js SDK 均已发布，可以直接在线安装，无需先克隆本仓库。
+
+Python：
+
+```shell
+pip install kingai-browser
+python -m kingai_browser install
+```
+
+Node.js / TypeScript（两条命令均在你的调用项目目录中运行）：
+
+```shell
+npm install @kingaibrowser/browser-api
+npx kingai-browser install
+```
+
+第一条安装 SDK，第二条显式下载并打开浏览器安装界面。安装包默认下载到系统临时目录，由用户自行完成安装，再打开 Manager 登录；已有安装可能直接复用。这不是静默安装。Node.js 要求 22 或以上版本，npx 应在已安装该包的项目目录运行，以使用本地 kingai-browser 命令。
+
+[PyPI 包主页](https://pypi.org/project/kingai-browser/) · [npm 包主页](https://www.npmjs.com/package/@kingaibrowser/browser-api) · [完整安装说明](INSTALLATION.zh-CN.md)
 
 ## 浏览器下载安装
 
@@ -28,7 +50,7 @@ result = install(download_only=True)
 print(result["status"], result["installerPath"])
 ```
 
-Windows 默认下载到 D 盘；下载目录不是浏览器安装目录。证书校验保持开启，IP 证书不可信或不匹配会失败；可传可信 SHA-256 校验文件。安装后打开 Manager 登录并运行 doctor。新增下载/安装入口本轮未下载或执行安装包，未运行构建、检查或测试。
+Windows 和 macOS 安装包默认下载到系统临时目录；下载目录不是浏览器安装目录。证书校验保持开启，IP 证书不可信或不匹配会失败；可传可信 SHA-256 校验文件。安装后打开 Manager 登录并运行 doctor。新增下载/安装入口本轮未下载或执行安装包，未运行构建、检查或测试。
 
 [完整安装说明](INSTALLATION.zh-CN.md)
 
@@ -182,14 +204,15 @@ with KingAI() as api:
 
 ## Node.js / TypeScript
 
-要求 Node.js 22+。在自己的调用项目中安装本地源码包：
+要求 Node.js 22+。在自己的调用项目中通过 npm 在线安装 SDK，再下载并打开浏览器安装界面：
 
 ```powershell
-npm install --cache D:\code\kingai-sdk-cache\npm D:\code\KingAIBrowser\js
+npm install @kingaibrowser/browser-api
+npx kingai-browser install
 ```
 
 ```javascript
-import { KingAI } from '@kingai/browser-api';
+import { KingAI } from '@kingaibrowser/browser-api';
 
 const api = new KingAI();
 try {

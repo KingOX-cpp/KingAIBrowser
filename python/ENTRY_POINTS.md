@@ -19,7 +19,7 @@ Use launch for a short script, KingAI for explicit environment/client management
 ## 2. Shared prerequisites
 
 ```shell
-python -m pip install kingai-browser==0.3.0
+python -m pip install kingai-browser==0.3.3
 python -m kingai_browser doctor
 ```
 

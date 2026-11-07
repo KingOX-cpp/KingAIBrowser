@@ -10,7 +10,29 @@ KingAI Browser combines persistent fingerprint profiles, Chromium/Blink source-l
 
 **SDK 0.3.0 · MIT License · No Playwright dependency · No HTTP service required**
 
-This repository contains open-source client SDKs, samples and tests. Download KingAI Browser from the [official website](https://www.kingaibrowser.cn/), [alternative website](https://kingaibrowser.ccwu.cc/) or [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases). Python SDK 0.3.0 is [published on PyPI](https://pypi.org/project/kingai-browser/0.3.0/): `python -m pip install kingai-browser`. npm/Maven packages remain unpublished.
+This repository contains open-source client SDKs, samples and tests. Download KingAI Browser from the [official website](https://www.kingaibrowser.cn/), [alternative website](https://kingaibrowser.ccwu.cc/) or [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases). Python SDK 0.3.3 is [published on PyPI](https://pypi.org/project/kingai-browser/0.3.3/): `python -m pip install kingai-browser`. The Node.js SDK is also available on [npm](https://www.npmjs.com/package/@kingaibrowser/browser-api); Maven publication is still pending.
+
+## Install online
+
+Both Python and Node.js SDKs are published. You do not need to clone this repository to install them.
+
+Python:
+
+```shell
+pip install kingai-browser
+python -m kingai_browser install
+```
+
+Node.js / TypeScript (run both commands in your application directory):
+
+```shell
+npm install @kingaibrowser/browser-api
+npx kingai-browser install
+```
+
+The first command installs the SDK; the second explicitly downloads and opens the browser installer. Installers use the system temporary directory by default; finish the installation UI yourself, then open Manager and sign in. An existing installation may be reused. Browser installation is not a silent process. Node.js requires version 22 or newer. Run npx in the project where you installed the package so it resolves the local kingai-browser command.
+
+[PyPI package](https://pypi.org/project/kingai-browser/) · [npm package](https://www.npmjs.com/package/@kingaibrowser/browser-api) · [Full installation guide](INSTALLATION.md)
 
 ## Download the browser installer
 
@@ -28,7 +50,7 @@ result = install(download_only=True)
 print(result["status"], result["installerPath"])
 ```
 
-Windows downloads default to D:. The download directory is not the browser installation directory. TLS verification stays enabled; invalid/mismatched IP certificates fail. Supply a trusted SHA-256 to verify the payload. After installation, open Manager, sign in and run doctor. No installer was downloaded or executed, and no build/check/test was run in this change.
+Installer downloads default to the system temporary directory on Windows and macOS. The download directory is not the browser installation directory. TLS verification stays enabled; invalid/mismatched IP certificates fail. Supply a trusted SHA-256 to verify the payload. After installation, open Manager, sign in and run doctor. No installer was downloaded or executed, and no build/check/test was run in this change.
 
 [Full installation guide](INSTALLATION.md)
 
@@ -182,14 +204,15 @@ Also includes `AsyncKingAI` and the `BrowserAutomation` agent facade. [Python do
 
 ## Node.js / TypeScript
 
-Node.js 22+. Install the local package from your application directory:
+Node.js 22+. Install from npm in your application directory, then download/open the browser installer:
 
 ```powershell
-npm install --cache D:\code\kingai-sdk-cache\npm D:\code\KingAIBrowser\js
+npm install @kingaibrowser/browser-api
+npx kingai-browser install
 ```
 
 ```javascript
-import { KingAI } from '@kingai/browser-api';
+import { KingAI } from '@kingaibrowser/browser-api';
 
 const api = new KingAI();
 try {

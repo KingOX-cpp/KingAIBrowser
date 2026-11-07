@@ -19,7 +19,7 @@
 ## 2. 共同前提
 
 ```powershell
-python -m pip install kingai-browser==0.3.0
+python -m pip install kingai-browser==0.3.3
 python -m kingai_browser doctor
 ```
 

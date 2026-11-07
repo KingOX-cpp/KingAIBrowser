@@ -12,6 +12,8 @@ After disconnecting, the original Session can no longer operate the retained win
 
 Four-language overview: [launch, explicit clients and Agent facades](../docs/SDK_ENTRY_POINTS.md). BrowserAutomation exists in Python/Node; Java/Go currently expose clients and sessions without that facade. See the matrix before choosing an entry point.
 
+Download progress: local source supports opt-in stderr progress (Node CLI enables it by default). See [installer options](../INSTALLATION.md). These language changes are not built/tested or published in this task.
+
 ## Download the browser installer
 
 Supports Windows Intel/AMD x64 and Apple Silicon macOS only, not Windows ARM, 32-bit Windows or Intel Mac. Each language has a native downloader. Explicit install calls can download and open the installer/DMG; finish its UI steps yourself. This is not silent installation.
@@ -23,7 +25,7 @@ if err != nil { return err }
 fmt.Println(result.Status, result.InstallerPath)
 ```
 
-Windows downloads default to D:. The download directory is not the browser installation directory. TLS verification stays enabled; invalid/mismatched IP certificates fail. Supply a trusted SHA-256 to verify the payload. After installation, open Manager, sign in and run doctor. No installer was downloaded or executed, and no build/check/test was run in this change.
+Installer downloads default to the system temporary directory on Windows and macOS. The download directory is not the browser installation directory. TLS verification stays enabled; invalid/mismatched IP certificates fail. Supply a trusted SHA-256 to verify the payload. After installation, open Manager, sign in and run doctor. No installer was downloaded or executed, and no build/check/test was run in this change.
 
 [Full installation guide](../INSTALLATION.md)
 

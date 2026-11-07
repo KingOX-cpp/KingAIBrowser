@@ -12,22 +12,32 @@ After disconnecting, the original Session can no longer operate the retained win
 
 Four-language overview: [launch, explicit clients and Agent facades](../docs/SDK_ENTRY_POINTS.md). BrowserAutomation exists in Python/Node; Java/Go currently expose clients and sessions without that facade. See the matrix before choosing an entry point.
 
+Download progress: local source supports opt-in stderr progress (Node CLI enables it by default). See [installer options](../INSTALLATION.md). The npm package is published; this documentation update did not build or test it.
+
 ## Download the browser installer
+
+Install the published SDK in your application directory, then download and open the browser installer:
+
+```shell
+npm install @kingaibrowser/browser-api
+npx kingai-browser install
+```
+
+Complete the installer UI yourself. Run subsequent `npx kingai-browser` commands in this same project directory. The package is available on [npm](https://www.npmjs.com/package/@kingaibrowser/browser-api).
 
 Supports Windows Intel/AMD x64 and Apple Silicon macOS only, not Windows ARM, 32-bit Windows or Intel Mac. Each language has a native downloader. Explicit install calls can download and open the installer/DMG; finish its UI steps yourself. This is not silent installation.
 
 ```javascript
-import { install } from '@kingai/browser-api';
+import { install } from '@kingaibrowser/browser-api';
 const result = await install({ downloadOnly: true });
 console.log(result.status, result.installerPath);
 ```
 
 ```powershell
-# From the repository root
-node js/cli.mjs install --download-only
+npx kingai-browser install --download-only
 ```
 
-Windows downloads default to D:. The download directory is not the browser installation directory. TLS verification stays enabled; invalid/mismatched IP certificates fail. Supply a trusted SHA-256 to verify the payload. After installation, open Manager, sign in and run doctor. No installer was downloaded or executed, and no build/check/test was run in this change.
+Installer downloads default to the system temporary directory on Windows and macOS. The download directory is not the browser installation directory. TLS verification stays enabled; invalid/mismatched IP certificates fail. Supply a trusted SHA-256 to verify the payload. After installation, open Manager, sign in and run doctor. No installer was downloaded or executed, and no build/check/test was run in this change.
 
 [Full installation guide](../INSTALLATION.md)
 
@@ -36,7 +46,7 @@ Windows downloads default to D:. The download directory is not the browser insta
 After installation and login, this entry discovers/connects MCP and starts a saved profile. The default must already exist; no missing-profile fallback is created.
 
 ```javascript
-import { launch } from '@kingai/browser-api';
+import { launch } from '@kingaibrowser/browser-api';
 
 const browser = await launch();
 try {
@@ -50,7 +60,7 @@ The returned session owns its new client. Close closes the browser and releases 
 [Troubleshooting / 故障排查](../TROUBLESHOOTING.md)
 
 ```powershell
-node js/cli.mjs doctor
+npx kingai-browser doctor
 ```
 
 Read-only diagnostics do not launch browsers. Login is unknown and Runtime unverified. MCP stderr is forwarded to the terminal, not stored in the report. CLI info falls back to basic metadata on older MCP versions.
@@ -58,14 +68,15 @@ Read-only diagnostics do not launch browsers. Login is unknown and Runtime unver
 ## Installation and discovery
 
 ```powershell
-npm install --cache D:/code/kingai-sdk-cache/npm ./js
+npm install @kingaibrowser/browser-api
+npx kingai-browser install
 ```
 
 ```powershell
 $env:KINGAI_MCP_EXECUTABLE = 'D:\Apps\KingAIBrowser\KingAIMcpServer.exe'
 ```
 
-Replace the example path. Discovery uses an explicit SDK option, then the environment variable, then the Manager record. Do not pass the main browser executable. Keep caches, temporary files and outputs on D:. Public registry packages are not published.
+Replace the example path. Discovery uses an explicit SDK option, then the environment variable, then the Manager record. Do not pass the main browser executable. Keep caches, temporary files and outputs on D:. The package is available on npm as @kingaibrowser/browser-api.
 
 ## Start with a complete example
 
@@ -83,7 +94,7 @@ The complete workflow lists/creates/configures profiles, inspects DOM, queries r
 ## Calling pattern and results
 
 ```javascript
-import { KingAI } from '@kingai/browser-api';
+import { KingAI } from '@kingaibrowser/browser-api';
 
 const api = new KingAI();
 try {

@@ -11,11 +11,33 @@ All four SDKs download the same official installers using their own language run
 
 Rosetta processes on Apple Silicon are detected where possible. The architecture check describes the host platform, not just the Python/JVM process bitness. Linux is unsupported by these installers.
 
+## Install online
+
+Both Python and Node.js SDKs are published. You do not need to clone this repository to install them.
+
+Python:
+
+```shell
+pip install kingai-browser
+python -m kingai_browser install
+```
+
+Node.js / TypeScript (run both commands in your application directory):
+
+```shell
+npm install @kingaibrowser/browser-api
+npx kingai-browser install
+```
+
+The first command installs the SDK; the second explicitly downloads and opens the browser installer. Installers use the system temporary directory by default; finish the installation UI yourself, then open Manager and sign in. An existing installation may be reused. Browser installation is not a silent process. Node.js requires version 22 or newer. Run npx in the project where you installed the package so it resolves the local kingai-browser command.
+
+[PyPI package](https://pypi.org/project/kingai-browser/) · [npm package](https://www.npmjs.com/package/@kingaibrowser/browser-api) · [Full installation guide](INSTALLATION.md)
+
 ## Installation semantics
 
 The SDK downloads the file and can open the Windows installation wizard or the macOS DMG. **This is not an unattended/silent installation.** Complete the wizard or DMG installation steps yourself. No unsupported silent flags, administrator elevation, automatic application replacement or Gatekeeper bypass are used. After installation, open Manager and sign in so it can register the installed MCP path, then run doctor.
 
-`downloadDir` means installer storage, **not** the browser installation directory. Windows defaults to `D:\code\KingAIBrowser-downloads`; macOS defaults to `~/Downloads/KingAIBrowser`. Each download has a unique subdirectory. Partial files are removed on failure; previous installers and browser data are not overwritten. The SDK does not delete completed installers automatically.
+`downloadDir` means installer storage, **not** the browser installation directory. Both platforms use the system temporary directory by default. Each download has a unique subdirectory. Partial files are removed on failure; previous installers and browser data are not overwritten. The SDK does not delete completed installers automatically.
 
 Statuses are deliberately limited:
 
@@ -25,9 +47,23 @@ Statuses are deliberately limited:
 
 ## Python
 
+Python 0.3.3: CLI download progress writes size, optional total/percentage, speed, elapsed time and ETA to stderr, leaving stdout JSON unchanged. Unknown totals are shown honestly. A terminal updates about once a second; redirected logs update about every five seconds. Connection, verification and installer opening have status messages.
+
+The fixed ten-minute total deadline is removed. `--network-timeout 60` configures a network-operation timeout, not a total duration. `--quiet` suppresses progress. Programmatic install() stays quiet unless `progress=True` is passed; it also accepts network_timeout. This does not increase server/network throughput. Python 0.3.3 passed 12 simulated installer regressions, build/metadata checks and isolated CLI/install checks and was uploaded to PyPI. No real browser installer was downloaded or launched.
+
+```powershell
+python -m kingai_browser install --network-timeout 60
+python -m kingai_browser install --download-only --quiet
+```
+
+```python
+from kingai_browser import install
+result = install(progress=True, network_timeout=60)
+```
+
 ```powershell
 # After installing the local Python SDK:
-python -m kingai_browser install --download-dir D:\code\KingAIBrowser-downloads
+python -m kingai_browser install
 # Download without opening the installer:
 python -m kingai_browser install --download-only
 # Force a new download even if an existing installation is found:
@@ -37,7 +73,7 @@ python -m kingai_browser install --no-reuse-existing
 ```python
 from kingai_browser import install
 
-result = install(download_dir=r"D:\code\KingAIBrowser-downloads", download_only=True)
+result = install(download_only=True)
 print(result["status"], result["installerPath"])
 # To download/open the installer UI explicitly: install(reuse_existing=False)
 ```
@@ -46,18 +82,26 @@ On macOS omit the Windows directory or pass an absolute macOS download path.
 
 ## Node.js / TypeScript
 
+Local source now supports `progress: true` and `networkTimeoutMs` (default 30000). CLI install displays progress by default; `--quiet` suppresses it and `--network-timeout 60` sets the timeout in seconds. Network inactivity is timed instead of imposing a ten-minute total deadline. The package is published on npm. This documentation update did not build or test the Node package.
+
+```javascript
+const result = await install({ progress: true, downloadOnly: true, networkTimeoutMs: 60000 });
+```
+
 ```powershell
-node js/cli.mjs install --download-dir D:\code\KingAIBrowser-downloads --download-only
+node js/cli.mjs install --download-only
 ```
 
 ```javascript
-import { install } from '@kingai/browser-api';
+import { install } from '@kingaibrowser/browser-api';
 const result = await install({ downloadOnly: true });
 console.log(result.status, result.installerPath);
 // downloadOnly:false (default) also opens the native installer UI.
 ```
 
 ## Java
+
+Local source overloads support progress without changing existing calls. `KingAI.install(null, true, null, true)` downloads only and displays progress; use false for its second argument to open the installer afterward. `BrowserInstaller.download(null, null, true)` is the explicit download-only primitive. Progress stays on stderr with periodic feedback while input reads wait. Java changes have not been built/tested or published in this task.
 
 ```java
 import cn.kingaibrowser.sdk.BrowserInstaller;
@@ -73,6 +117,14 @@ System.out.println(result.status() + ": " + result.installerPath());
 `KingAI.install(downloadDir, downloadOnly, expectedSha256)` accepts an absolute Path or null for the platform default. `BrowserInstaller.download` is the download-only primitive. Keep the returned installer at a trusted path before opening it.
 
 ## Go
+
+Local source supports `Progress: true` and `NetworkTimeout: 60*time.Second`. Progress stays on stderr. The fixed ten-minute total deadline is removed; idle network reads time out and the caller's context still controls cancellation/deadlines. Go changes have not been built/tested in this task.
+
+```go
+result, err := kingai.Install(ctx, kingai.InstallOptions{
+    DownloadOnly: true, Progress: true, NetworkTimeout: 60 * time.Second,
+})
+```
 
 ```go
 // Function-body snippet; ctx is context.Context, import kingai and fmt.
