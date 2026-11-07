@@ -8,10 +8,23 @@ These examples go beyond opening a tab. Each full workflow lists environments, c
 
 | Language | Complete workflow | Minimal connection sample |
 | --- | --- | --- |
-| Python | [workflow.py](../python/examples/workflow.py) | [sync.py](../python/examples/sync.py), [async.py](../python/examples/async.py) |
-| Node.js | [workflow.mjs](../js/examples/workflow.mjs) | [node.mjs](../js/examples/node.mjs) |
+| Python | [browser_form_automation.py](../python/examples/browser_form_automation.py) | [async_browser_form_automation.py](../python/examples/async_browser_form_automation.py) |
+| Node.js | [browser_form_automation.mjs](../js/examples/browser_form_automation.mjs) | [node.mjs](../js/examples/saved_profile_quickstart.mjs) |
 | Java | [Workflow.java](../java/src/main/java/cn/kingaibrowser/sdk/samples/Workflow.java) | [Sample.java](../java/src/main/java/cn/kingaibrowser/sdk/samples/Sample.java) |
 | Go | [workflow/main.go](../go/examples/workflow/main.go) | [basic/main.go](../go/examples/basic/main.go) |
+
+## Choose by task / 按任务选择
+
+- [Profile management / 环境管理](../python/examples/profile_management.py): list, create, get, rename, patch locale, optionally delete only the newly created profile. No browser is launched.
+- [Tool catalog / 全接口目录](../python/examples/mcp_tool_catalog.py): enumerate every installed tool and required parameter schema. Read-only, no tool execution.
+- [Synchronous form / 同步表单](../python/examples/browser_form_automation.py): create an environment and perform DOM-driven input/click/result confirmation.
+- [Asynchronous form / 异步表单](../python/examples/async_browser_form_automation.py): the same business interaction using sequential awaits and explicit ownership.
+- [API recipes / 分类接口调用手册](../docs/API_EXAMPLES.md): profile CRUD, sessions, tabs, DOM pagination, click/fill/type/key/scroll/hover, evaluation, artifacts, upload/download, cookies/storage, Skills and errors, with generic invocation syntax for all four languages.
+- Node.js equivalents: [profile_management.mjs](../js/examples/profile_management.mjs), [mcp_tool_catalog.mjs](../js/examples/mcp_tool_catalog.mjs), [browser_form_automation.mjs](../js/examples/browser_form_automation.mjs).
+
+The previous short Python navigation snippets are now internal fixture-test inputs under python/tests/fixtures/, not the recommended public examples. File names describe the task instead of only naming sync/async execution modes.
+
+原来的 Python 短导航片段已移入测试夹具目录，不再作为公开入门示例。示例文件按用途命名，异步版单独明确前缀。每个示例说明前提、入口、行为和保留的环境；不会为了凑长度添加无意义代码。
 
 ## Start the local playground / 启动本地演示页面
 
@@ -31,10 +44,10 @@ Install the browser and sign in, set `KINGAI_MCP_EXECUTABLE`, and install your l
 
 ```powershell
 # Python: install ./python first
-python python/examples/workflow.py --live
+python python/examples/browser_form_automation.py --live
 
 # Node.js: install dependencies inside ./js first
-node js/examples/workflow.mjs --live
+node js/examples/browser_form_automation.mjs --live
 
 # Go: configure dependency caches on D: before running
 cd go

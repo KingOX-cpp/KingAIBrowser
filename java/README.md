@@ -1,25 +1,91 @@
-# KingAI Java SDK
+# KingAI Java SDK guide
 
-完整环境、DOM、输入和点击示例：[Workflow.java](src/main/java/cn/kingaibrowser/sdk/samples/Workflow.java)，运行说明见[示例导航](../examples/README.md)。
+English | [简体中文](README.zh-CN.md) | [Project / 项目](../README.md)
 
-Java 17+，Maven 模块，版本 0.3.0。该库直接使用 JSON-RPC/stdin/stdout 连接已安装 KingAI MCP；不需要 Python、Node.js 或 HTTP 服务。JSON 编解码使用 Jackson。sample 与 3 项测试已在模拟 MCP 下通过，入口及复跑方法见 [SAMPLES](../SAMPLES.md)。
+**SDK 0.3.0 · MIT · Java 17+ / Maven**
+
+Calls the installed KingAI MCP over stdio. No HTTP service or Playwright is required. Install the browser, sign in and use matching MCP/Runtime components first.
+
+## Installation and discovery
+
+```powershell
+mvn -f java/pom.xml -Dmaven.repo.local=D:/code/kingai-sdk-cache/m2 -Dkingai.build.directory=D:/code/kingai-sdk-build/java install
+```
+
+Maven dependency: `cn.kingaibrowser.sdk:kingai-browser:0.3.0`. Use the same D: local Maven repository in your application; keep Jackson and bundled resource scripts on the classpath.
+
+```powershell
+$env:KINGAI_MCP_EXECUTABLE = 'D:\Apps\KingAIBrowser\KingAIMcpServer.exe'
+```
+
+Replace the example path. Discovery uses an explicit SDK option, then the environment variable, then the Manager record. Do not pass the main browser executable. Keep caches, temporary files and outputs on D:. Public registry packages are not published.
+
+## Start with a complete example
+
+[Examples and prerequisites / 示例与前提](../examples/README.md) · [API recipes / 接口调用手册](../docs/API_EXAMPLES.md)
+
+```powershell
+# From repository root / 在仓库根目录，另开终端启动演示网页
+python -m http.server 8765 --bind 127.0.0.1 --directory examples
+# Then run in another terminal / 然后另开终端执行
+See examples/README.md for the complete Java classpath command.
+```
+
+The complete workflow lists/creates/configures profiles, inspects DOM, queries refs, fills fields, clicks and independently confirms the result. Keep the window visible. Newly created profiles are retained.
+
+## Calling pattern and results
 
 ```java
 import cn.kingaibrowser.sdk.KingAI;
+import java.util.Map;
 
+// Inside your application method / 放在调用方方法中
 try (KingAI api = new KingAI()) {
-    System.out.println(api.info());
-    KingAI.Session browser = api.start(); // 已有唯一“默认环境”
-    browser.newTab("https://example.com");
-    System.out.println(browser.read());
-    browser.detach();
+    System.out.println(api.profiles());
+    String id = api.createProfile("My unique environment").path("profileId").asText();
+    api.updateProfile(id, Map.of("name", "My configured environment"));
+    KingAI.Session browser = api.start(Map.of("profile_id", id));
+    try {
+        browser.newTab("http://127.0.0.1:8765/demo.html");
+        browser.call("browser_wait", Map.of("selector", "#name", "state", "visible"));
+        System.out.println(browser.query(Map.of("selector", "#name", "include_html", true)));
+        browser.call("browser_fill", Map.of("selector", "#name", "text", "KingAI", "humanize", false));
+        System.out.println(browser.read());
+    } finally { browser.detach(); }
 }
 ```
 
-显式配置：`KingAI.Options o = new KingAI.Options(); o.mcpExecutable = Path.of("绝对MCP路径"); new KingAI(o)`。还支持 timeout、language、fileRoots、downloadDir 和 artifactDir。
+`profileId` identifies saved environments; `sessionId` identifies a running session; `targetId` identifies a tab; `ref` identifies an observed element. / 四类 ID 分别代表环境、会话、标签和已观察元素，不可混用。
 
-环境管理使用 profiles/profile/createProfile/updateProfile/deleteProfile；删除必须显式确认。`api.tools()` 返回全部 schema；`api.call(name, Map.of(...))` 调用所有 MCP 工具；`session.call` 绑定会话。`session.observe(name,args)` 对操作和观察整体加锁。`evaluatePreview` 使用随 JAR 分发的资源脚本，不能只复制 Java 类而丢失 resources。
+## API category map
 
-`api.close()` 只关闭自己的 MCP；`session.closeBrowser()` 明确关闭浏览器。超时或线程中断不代表副作用未发生，不自动重试。`KingAIException` 保留 code/details/outcomeUnknown。请使用 try-with-resources；没有安装全局 JVM shutdown hook。
+| Category / 类别 | MCP tools / 工具 | Usage / 用途 |
+| --- | --- | --- |
+| Profiles / 环境 | `profiles_list`, `profiles_get`, `profiles_create`, `profiles_update`, `profiles_delete` | List summaries; create, inspect, configure a closed profile, explicitly delete. / 获取摘要、创建、读取、修改已关闭环境、显式删除。 |
+| Sessions / 会话 | `browser_start`, `browser_sessions_list`, `browser_attach`, `browser_detach`, `browser_close` | Start by profile ID, discover active sessions, attach or detach. Close is destructive. / 按环境 ID 启动、查找和接入会话，区分断开与关闭。 |
+| Tabs / 标签页 | `tabs_list`, `tabs_new`, `tabs_activate`, `tabs_close`, `browser_navigate` | Use returned targetId; activate before input. / 使用返回的 targetId，输入前激活目标标签。 |
+| DOM / 页面 | `browser_read`, `browser_snapshot`, `browser_query`, `browser_wait` | Read text, inspect bounded DOM, obtain refs, wait for explicit conditions. / 读取文本、观察 DOM、取得 ref、等待明确条件。 |
+| Input / 输入 | `browser_click`, `browser_fill`, `browser_type`, `browser_key`, `browser_scroll`, `browser_hover` | Fill replaces text; type appends. Query refs before action. / fill 替换，type 追加；先查询再操作。 |
+| JavaScript / 求值 | `browser_evaluate` | Raw evaluation preserves results; preview is bounded and may truncate. / 原始求值与显式预览不同，预览可能截断。 |
+| Artifacts / 产物 | `browser_screenshot`, `browser_pdf`, `browser_upload`, `browser_download` | Configure artifact/download roots and permitted upload paths. / 配置产物目录、下载目录和上传权限。 |
+| State / 状态 | `cookies_list`, `storage_get` | Inspect local site state; never publish cookies or secrets. / 查看站点状态，不公开 Cookie 或秘密。 |
+| Skills / 工作流 | `skills_list`, `skill_describe`, `skill_run`, `skill_status`, `skill_cancel`, `skill_runs_list` | Discover parameters before starting; poll returned run ID. / 先发现参数，启动后用真实 run ID 查询。 |
+| Discovery / 工具发现 | `sdk_info`, `tools/list`, `runtime_request_status` | Installed schemas are authoritative; Runtime IDs are not JSON-RPC IDs. / 以安装版 schema 为准，区分 Runtime ID 与 JSON-RPC ID。 |
 
-Maven 坐标是本地发布准备值，尚未发布到 Maven Central。D 盘仓库/构建目录参数及发布约束见 [RELEASE](../RELEASE.md)，共同 API 规则见 [CONTRACT](../CONTRACT.md)。本轮测试没有启动真实浏览器，也未验证其他平台组合。
+Every installed tool is available through generic `call` / `Call`; convenience methods differ by language. Use the recipes for exact argument examples and inspect `tools/list` for required fields. / 所有安装版工具都能经通用调用访问，便利方法并非每种语言完全相同；参数示例见手册，必填项以安装版 schema 为准。
+
+## Lifecycle, errors and permissions
+
+- Client close disconnects MCP; session close closes the browser. Detach keeps the browser available. / 客户端关闭、会话断开和浏览器关闭含义不同。
+- Default start requires an existing unique 默认环境; it does not create one. / 默认启动不会自动创建缺失环境。
+- Update only closed profiles; deletion requires explicit confirmation and removes persistent data. / 更新前关闭环境；删除需确认且会移除持久数据。
+- Side effects are not automatically retried after timeout or observation failure. / 超时和观察失败不自动重放输入。
+- Humanize needs valid entitlement; examples explicitly use false for basic form interaction. / 拟人化需要有效权益，演示显式关闭。
+- PAGE_NOT_VISIBLE requires restoring the window and selecting the intended tab. / 页面不可见时恢复窗口并激活标签。
+- Call sequences use one selected tab; serialize multi-step workflows. / 多步操作串行，不是 Playwright 多 Page 模型。
+
+## Test scope and license
+
+[SAMPLES.md](../SAMPLES.md) records earlier fixture tests. New examples, documentation and renames have not been built, checked or tested in this task. / 旧模拟测试不代表新增示例已实机验证；本轮未运行构建、检查或测试。
+
+MIT: retain copyright/license and applicable third-party notices. / 允许传播、修改与商用，保留版权、许可及适用的第三方声明。

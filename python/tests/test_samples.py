@@ -8,10 +8,10 @@ from concurrent.futures import ThreadPoolExecutor
 from kingai_browser import KingAI, KingAIError, AsyncKingAI
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location("sample_sync", ROOT / "examples/sync.py")
+spec = importlib.util.spec_from_file_location("sample_sync", ROOT / "tests/fixtures/saved_profile_navigation.py")
 sample = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(sample)
-async_spec = importlib.util.spec_from_file_location("sample_async", ROOT / "examples/async.py")
+async_spec = importlib.util.spec_from_file_location("sample_async", ROOT / "tests/fixtures/async_saved_profile_navigation.py")
 async_sample = importlib.util.module_from_spec(async_spec)
 async_spec.loader.exec_module(async_sample)
 FIXTURE = os.environ.get("KINGAI_TEST_MCP")

@@ -71,7 +71,7 @@ cd D:\code\KingAIBrowser
 
 | Python | Node.js | Java | Go |
 | --- | --- | --- | --- |
-| [workflow.py](python/examples/workflow.py) | [workflow.mjs](js/examples/workflow.mjs) | [Workflow.java](java/src/main/java/cn/kingaibrowser/sdk/samples/Workflow.java) | [main.go](go/examples/workflow/main.go) |
+| [browser_form_automation.py](python/examples/browser_form_automation.py) | [browser_form_automation.mjs](js/examples/browser_form_automation.mjs) | [Workflow.java](java/src/main/java/cn/kingaibrowser/sdk/samples/Workflow.java) | [main.go](go/examples/workflow/main.go) |
 
 SDK 分别放在 `python/`、`js/`、`java/`、`go/`。根目录的 `examples/` 提供公共演示页面和导航。下方片段用于快速入门，完整交互请看上面的 workflow 示例。
 
@@ -99,7 +99,7 @@ with KingAI() as api:
     browser.detach()                        # 结束会话，保留浏览器
 ```
 
-同时提供 `AsyncKingAI` 异步入口与 `BrowserAutomation` Agent 封装。[Python 说明](python/README.md) · [同步 sample](python/examples/sync.py) · [异步 sample](python/examples/async.py)。
+同时提供 `AsyncKingAI` 异步入口与 `BrowserAutomation` Agent 封装。[Python 说明](python/README.md) · [环境管理示例](python/examples/profile_management.py) · [异步表单示例](python/examples/async_browser_form_automation.py)。
 
 ## Node.js / TypeScript
 
@@ -123,7 +123,7 @@ try {
 } finally { await api.close(); }
 ```
 
-提供 TypeScript 类型声明。运行[仓库 sample](js/examples/node.mjs)前，在 js/ 目录执行 `npm install --cache D:\code\kingai-sdk-cache\npm`，然后在 js/ 目录执行 `node examples/node.mjs --live`。
+提供 TypeScript 类型声明。运行[仓库 sample](js/examples/saved_profile_quickstart.mjs)前，在 js/ 目录执行 `npm install --cache D:\code\kingai-sdk-cache\npm`，然后在 js/ 目录执行 `node examples/saved_profile_quickstart.mjs --live`。
 
 ## Java
 

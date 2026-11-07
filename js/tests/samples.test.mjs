@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { KingAI } from '../client.mjs';
-import { runSample } from '../examples/node.mjs';
+import { runSample } from '../examples/saved_profile_quickstart.mjs';
 import { previewExpression } from '../observation.mjs';
 import { runInNewContext } from 'node:vm';
 import { readFile } from 'node:fs/promises';

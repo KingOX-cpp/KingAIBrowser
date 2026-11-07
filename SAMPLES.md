@@ -4,9 +4,9 @@
 
 | 语言 | Sample 实现 | 测试 | 本轮结果 |
 | --- | --- | --- | --- |
-| Python 同步 | python/examples/sync.py 的 run_sample | python/tests/test_samples.py | 与异步合计 7 项通过 |
-| Python 异步 | python/examples/async.py 的 run_sample | 同上 | 包含实际异步 sample、取消不重放 |
-| Node.js | js/examples/node.mjs 的 runSample | js/tests/samples.test.mjs | 4 项通过 |
+| Python 同步 | python/tests/fixtures/saved_profile_navigation.py 的 run_sample | python/tests/test_samples.py | 与异步合计 7 项通过 |
+| Python 异步 | python/tests/fixtures/async_saved_profile_navigation.py 的 run_sample | 同上 | 包含实际异步 sample、取消不重放 |
+| Node.js | js/examples/saved_profile_quickstart.mjs 的 runSample | js/tests/samples.test.mjs | 4 项通过 |
 | Java | java/src/main/java/cn/kingaibrowser/sdk/samples/Sample.java | java/src/test/java/cn/kingaibrowser/sdk/SampleTest.java | 3 项通过 |
 | Go | go/sample/sample.go 的 RunSample | go/sample_test.go | 3 项通过 |
 
@@ -40,8 +40,8 @@ Windows PowerShell，需 Python 3.10+、Node 22+、Java 17+、Go 1.24+、Maven�
 
 先安装相应 SDK、登录 KingAI，并更新兼容的 MCP/Runtime。设置 KINGAI_MCP_EXECUTABLE，或使用已有 Manager 路径登记。真实 sample 会创建持久环境，重复使用相同名称会返回重名错误，正常结束只 detach、不删除环境。
 
-- Python：`python python/examples/sync.py --live`；异步：`python python/examples/async.py --live`（异步使用已有默认环境）。
-- Node.js：`node js/examples/node.mjs --live`（先安装依赖）。
+- Python：`python python/examples/profile_management.py --live`；异步：`python python/examples/async_browser_form_automation.py --live`（异步使用已有默认环境）。
+- Node.js：`node js/examples/saved_profile_quickstart.mjs --live`（先安装依赖）。
 - Java：运行 `cn.kingaibrowser.sdk.samples.Sample --live`，或 java/examples/Example.java 转发入口；classpath 需要本库及 Jackson 依赖。
 - Go：在 go 目录运行 `go run ./examples/basic --live`。
 

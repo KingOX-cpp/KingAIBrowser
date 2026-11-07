@@ -71,7 +71,7 @@ Start with [complete workflows](examples/README.md): environment listing, creati
 
 | Python | Node.js | Java | Go |
 | --- | --- | --- | --- |
-| [workflow.py](python/examples/workflow.py) | [workflow.mjs](js/examples/workflow.mjs) | [Workflow.java](java/src/main/java/cn/kingaibrowser/sdk/samples/Workflow.java) | [main.go](go/examples/workflow/main.go) |
+| [browser_form_automation.py](python/examples/browser_form_automation.py) | [browser_form_automation.mjs](js/examples/browser_form_automation.mjs) | [Workflow.java](java/src/main/java/cn/kingaibrowser/sdk/samples/Workflow.java) | [main.go](go/examples/workflow/main.go) |
 
 SDK code is organized by language in `python/`, `js/`, `java/` and `go/`. `examples/` contains the shared playground and example guide. The snippets below are minimal entry points; use the workflows above for complete interaction examples.
 
@@ -99,7 +99,7 @@ with KingAI() as api:
     browser.detach()
 ```
 
-Also includes `AsyncKingAI` and the `BrowserAutomation` agent facade. [Python docs](python/README.md) · [sync sample](python/examples/sync.py) · [async sample](python/examples/async.py).
+Also includes `AsyncKingAI` and the `BrowserAutomation` agent facade. [Python docs](python/README.md) · [profile management](python/examples/profile_management.py) · [async form automation](python/examples/async_browser_form_automation.py).
 
 ## Node.js / TypeScript
 
@@ -123,7 +123,7 @@ try {
 } finally { await api.close(); }
 ```
 
-TypeScript declarations are included. To run the [repository sample](js/examples/node.mjs), install dependencies in js/ with `npm install --cache D:\code\kingai-sdk-cache\npm`, then run `node examples/node.mjs --live` from js/.
+TypeScript declarations are included. To run the [repository sample](js/examples/saved_profile_quickstart.mjs), install dependencies in js/ with `npm install --cache D:\code\kingai-sdk-cache\npm`, then run `node examples/saved_profile_quickstart.mjs --live` from js/.
 
 ## Java
 
