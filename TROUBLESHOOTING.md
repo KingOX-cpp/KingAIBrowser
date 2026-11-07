@@ -1,5 +1,9 @@
 # Troubleshooting / 故障排查
 
+## Installer download / 安装包下载
+
+See [installation guide](INSTALLATION.md) / [中文](INSTALLATION.zh-CN.md). Supported targets are Windows Intel/AMD x64 and Apple Silicon macOS only. A certificate error from the IP-based download URLs must be fixed at the trusted HTTPS endpoint; do not disable TLS verification. Supply an independently trusted expected hash when available. `installer_started` means only that the native launcher accepted the request; complete the wizard/DMG steps, open Manager and sign in before using doctor/launch. `downloadDir` controls installer storage, not application installation location.
+
 ## Start with read-only diagnostics / 先运行只读诊断
 
 ```powershell

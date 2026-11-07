@@ -10,6 +10,27 @@
 
 连接释放后，原 Session 对象不能继续操作保留窗口。可在 Manager 中关闭，或由新客户端发现真实会话、在授权允许时显式 attach 后关闭；SDK 不自动重连。Java closeBrowser() 在客户端已关闭时抛 SESSION_DISCONNECTED。
 
+四语言入口总览：[launch、显式客户端和 Agent facade 的区别与用法](../docs/SDK_ENTRY_POINTS.zh-CN.md)。Python/Node 提供 BrowserAutomation，Java/Go 当前未提供同名封装；普通会话与通用 MCP 调用四种语言均支持。
+
+## 浏览器下载安装
+
+支持 Windows Intel/AMD x64 和 Apple 芯片 Mac，不支持 Windows ARM、32 位 Windows 或 Intel Mac。四语言均提供原生下载实现；显式安装命令可下载并打开安装向导/DMG，仍需用户完成安装，不是静默安装。
+
+```javascript
+import { install } from '@kingai/browser-api';
+const result = await install({ downloadOnly: true });
+console.log(result.status, result.installerPath);
+```
+
+```powershell
+# From the repository root
+node js/cli.mjs install --download-only
+```
+
+Windows 默认下载到 D 盘；下载目录不是浏览器安装目录。证书校验保持开启，IP 证书不可信或不匹配会失败；可传可信 SHA-256 校验文件。安装后打开 Manager 登录并运行 doctor。新增下载/安装入口本轮未下载或执行安装包，未运行构建、检查或测试。
+
+[完整安装说明](../INSTALLATION.zh-CN.md)
+
 ## 快速入口：launch
 
 完成安装和登录后，下面的入口负责定位 MCP、连接并启动环境。默认只打开已有的唯一“默认环境”，不会自动创建缺失环境。

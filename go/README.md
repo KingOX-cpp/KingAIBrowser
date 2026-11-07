@@ -10,6 +10,23 @@ Lifecycle update: Python launch contexts and Java automatic Session resource cle
 
 After disconnecting, the original Session can no longer operate the retained window. Close it in Manager, or discover the real active session through a new client and explicitly attach if authorized. No automatic reconnection occurs. Java closeBrowser() throws SESSION_DISCONNECTED if its client is closed.
 
+Four-language overview: [launch, explicit clients and Agent facades](../docs/SDK_ENTRY_POINTS.md). BrowserAutomation exists in Python/Node; Java/Go currently expose clients and sessions without that facade. See the matrix before choosing an entry point.
+
+## Download the browser installer
+
+Supports Windows Intel/AMD x64 and Apple Silicon macOS only, not Windows ARM, 32-bit Windows or Intel Mac. Each language has a native downloader. Explicit install calls can download and open the installer/DMG; finish its UI steps yourself. This is not silent installation.
+
+```go
+// Inside a function returning error.
+result, err := kingai.Install(ctx, kingai.InstallOptions{DownloadOnly: true})
+if err != nil { return err }
+fmt.Println(result.Status, result.InstallerPath)
+```
+
+Windows downloads default to D:. The download directory is not the browser installation directory. TLS verification stays enabled; invalid/mismatched IP certificates fail. Supply a trusted SHA-256 to verify the payload. After installation, open Manager, sign in and run doctor. No installer was downloaded or executed, and no build/check/test was run in this change.
+
+[Full installation guide](../INSTALLATION.md)
+
 ## Quick entry: launch
 
 After installation and login, this entry discovers/connects MCP and starts a saved profile. The default must already exist; no missing-profile fallback is created.

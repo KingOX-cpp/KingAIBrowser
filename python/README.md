@@ -4,13 +4,39 @@ English | [简体中文](README.zh-CN.md) | [Project / 项目](../README.md)
 
 **SDK 0.3.0 · MIT · Python 3.10+**
 
+**New to the API? Read [launch vs KingAI vs BrowserAutomation](ENTRY_POINTS.md)** for entry-point selection, full examples, DOM/state differences and a connection/window lifecycle table. [中文详细说明](ENTRY_POINTS.zh-CN.md).
+
 Calls the installed KingAI MCP over stdio. No HTTP service or Playwright is required. Install the browser, sign in and use matching MCP/Runtime components first.
 
 Lifecycle update: Python launch contexts and Java automatic Session resource cleanup detach and preserve windows. Explicit browser shutdown uses Python close()/close_browser(), Node close()/closeBrowser(), Java closeBrowser(), or Go Close()/CloseBrowser(). New ownership cases and launch/doctor changes are unexecuted; the historical 17-test result does not cover them.
 
 After disconnecting, the original Session can no longer operate the retained window. Close it in Manager, or discover the real active session through a new client and explicitly attach if authorized. No automatic reconnection occurs. Java closeBrowser() throws SESSION_DISCONNECTED if its client is closed.
 
+Four-language overview: [launch, explicit clients and Agent facades](../docs/SDK_ENTRY_POINTS.md). BrowserAutomation exists in Python/Node; Java/Go currently expose clients and sessions without that facade. See the matrix before choosing an entry point.
+
+## Download the browser installer
+
+Supports Windows Intel/AMD x64 and Apple Silicon macOS only, not Windows ARM, 32-bit Windows or Intel Mac. Each language has a native downloader. Explicit install calls can download and open the installer/DMG; finish its UI steps yourself. This is not silent installation.
+
+```powershell
+python -m kingai_browser install --download-only
+# Download and open the installer UI
+python -m kingai_browser install
+```
+
+```python
+from kingai_browser import install
+result = install(download_only=True)
+print(result["status"], result["installerPath"])
+```
+
+Windows downloads default to D:. The download directory is not the browser installation directory. TLS verification stays enabled; invalid/mismatched IP certificates fail. Supply a trusted SHA-256 to verify the payload. After installation, open Manager, sign in and run doctor. No installer was downloaded or executed, and no build/check/test was run in this change.
+
+[Full installation guide](../INSTALLATION.md)
+
 ## Quick entry: launch
+
+For ordinary scripts, use launch()/KingAI and the returned session's query()/snapshot() to read DOM elements. BrowserAutomation is the separate Agent action/state facade used by adapters such as OpenManus: execute(action, ...), get_current_state(), describe_error() and close(). Its interactive_elements state field is a JSON-serialized snapshot, not browser-side storage or a live DOM list. See the [entry-point comparison and complete API examples](../docs/API_EXAMPLES.md).
 
 After installation and login, this entry discovers/connects MCP and starts a saved profile. The default must already exist; no missing-profile fallback is created.
 
@@ -45,7 +71,7 @@ python -m pip install --cache-dir D:/code/kingai-sdk-cache/pip ./python
 $env:KINGAI_MCP_EXECUTABLE = 'D:\Apps\KingAIBrowser\KingAIMcpServer.exe'
 ```
 
-Replace the example path. Discovery uses an explicit SDK option, then the environment variable, then the Manager record. Do not pass the main browser executable. Keep caches, temporary files and outputs on D:. Public registry packages are not published.
+Replace the example path. Discovery uses an explicit SDK option, then the environment variable, then the Manager record. Do not pass the main browser executable. Python SDK 0.3.0 is available on [PyPI](https://pypi.org/project/kingai-browser/0.3.0/): `python -m pip install kingai-browser`. Publication caches and outputs for this release were kept under F:\kingai-pypi.
 
 ## Start with a complete example
 

@@ -8,7 +8,7 @@ SDK version: **0.3.0**. API contract: **1**. This repository publishes source co
 
 | SDK | Source location | Package identity | Distribution status |
 | --- | --- | --- | --- |
-| Python | python/ | kingai-browser | Source install; no PyPI release |
+| Python | python/ | kingai-browser | PyPI 0.3.0 published on 2026-11-07; online install/import verified |
 | Node.js / TypeScript | js/ | @kingai/browser-api | Local package install; no npm release |
 | Java | java/ | cn.kingaibrowser.sdk:kingai-browser:0.3.0 | Local Maven install; no Maven Central release |
 | Go | go/ | github.com/KingOX-cpp/KingAIBrowser/go | Local replace supported; no version tag claimed |
@@ -16,6 +16,8 @@ SDK version: **0.3.0**. API contract: **1**. This repository publishes source co
 Public package names, namespace ownership, signing and publication credentials must be confirmed before registry release. Source on GitHub does not imply registry availability. For the nested Go module, a future tagged v0.3.0 module release requires the `go/v0.3.0` tag.
 
 ## Installation
+
+Browser installers now have explicit four-language download entries; see [INSTALLATION.md](INSTALLATION.md) / [中文](INSTALLATION.zh-CN.md). Python packaging includes _kingai_installer.py; the Node files list includes installer.mjs; Java and Go include native installer helpers. These changes have not been built, installed, downloaded or tested in this task. Browser setup remains an interactive system operation; opening an installer is not proof of completion.
 
 See the four language sections in either README. Keep download caches, temporary directories and build outputs on D: on Windows. For Maven, set both `maven.repo.local` and `kingai.build.directory`. For Go, set `GOMODCACHE`, `GOCACHE` and `GOTMPDIR`. Node installations should set `--cache`; Python installations should set pip's cache and `TEMP`/`TMP`.
 

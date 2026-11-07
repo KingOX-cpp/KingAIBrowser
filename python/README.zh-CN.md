@@ -4,13 +4,39 @@
 
 **SDK 0.3.0 · MIT · Python 3.10+**
 
+**首次使用请先看：[launch、KingAI、BrowserAutomation 详细区别与用法](ENTRY_POINTS.zh-CN.md)**，包含入口选择、完整示例、DOM/状态区别和连接/窗口生命周期速查。[English](ENTRY_POINTS.md)。
+
 本库通过 stdio 调用已安装的 KingAI MCP，不需要 HTTP 服务或 Playwright。先安装浏览器并登录，MCP/Runtime 必须支持所需工具。
 
 生命周期更新：Python launch 上下文和 Java Session 自动资源退出会 detach 并保留窗口。显式关闭分别使用 Python close()/close_browser()、Node close()/closeBrowser()、Java closeBrowser()、Go Close()/CloseBrowser()。新增 ownership、launch、doctor 均未执行验证，历史 17 项测试不覆盖这些改动。
 
 连接释放后，原 Session 对象不能继续操作保留窗口。可在 Manager 中关闭，或由新客户端发现真实会话、在授权允许时显式 attach 后关闭；SDK 不自动重连。Java closeBrowser() 在客户端已关闭时抛 SESSION_DISCONNECTED。
 
+四语言入口总览：[launch、显式客户端和 Agent facade 的区别与用法](../docs/SDK_ENTRY_POINTS.zh-CN.md)。Python/Node 提供 BrowserAutomation，Java/Go 当前未提供同名封装；普通会话与通用 MCP 调用四种语言均支持。
+
+## 浏览器下载安装
+
+支持 Windows Intel/AMD x64 和 Apple 芯片 Mac，不支持 Windows ARM、32 位 Windows 或 Intel Mac。四语言均提供原生下载实现；显式安装命令可下载并打开安装向导/DMG，仍需用户完成安装，不是静默安装。
+
+```powershell
+python -m kingai_browser install --download-only
+# Download and open the installer UI
+python -m kingai_browser install
+```
+
+```python
+from kingai_browser import install
+result = install(download_only=True)
+print(result["status"], result["installerPath"])
+```
+
+Windows 默认下载到 D 盘；下载目录不是浏览器安装目录。证书校验保持开启，IP 证书不可信或不匹配会失败；可传可信 SHA-256 校验文件。安装后打开 Manager 登录并运行 doctor。新增下载/安装入口本轮未下载或执行安装包，未运行构建、检查或测试。
+
+[完整安装说明](../INSTALLATION.zh-CN.md)
+
 ## 快速入口：launch
+
+普通脚本用 launch()/KingAI 返回的会话调用 query()/snapshot() 获取 DOM。BrowserAutomation 是给 OpenManus 等 Agent 适配层使用的高层动作/状态封装，提供 execute、get_current_state、describe_error 和 close；其状态中的 interactive_elements 是 JSON 字符串形式的快照，不是浏览器持久存储或直接可用的 DOM 数组。详见[入口区别及完整接口示例](../docs/API_EXAMPLES.md)。
 
 完成安装和登录后，下面的入口负责定位 MCP、连接并启动环境。默认只打开已有的唯一“默认环境”，不会自动创建缺失环境。
 
@@ -45,7 +71,7 @@ python -m pip install --cache-dir D:/code/kingai-sdk-cache/pip ./python
 $env:KINGAI_MCP_EXECUTABLE = 'D:\Apps\KingAIBrowser\KingAIMcpServer.exe'
 ```
 
-示例路径需替换。定位顺序为显式 SDK 参数、环境变量、管理器登记。不能把浏览器主程序当 MCP。依赖、临时文件、缓存与构建输出放 D 盘。公共包尚未发布。
+示例路径需替换。定位顺序为显式 SDK 参数、环境变量、管理器登记。不能把浏览器主程序当 MCP。Python SDK 0.3.0 已[发布到 PyPI](https://pypi.org/project/kingai-browser/0.3.0/)，可执行 `python -m pip install kingai-browser`。本次发布缓存与输出均保存在 F:\kingai-pypi。
 
 ## 从完整示例开始
 

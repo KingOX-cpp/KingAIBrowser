@@ -1,5 +1,13 @@
 # KingAI code API contract 1 / SDK 0.3.0
 
+## 显式下载安装入口
+
+Python install、Node install、Java KingAI.install / BrowserInstaller.download、Go Install 使用各自语言的 HTTPS 下载实现，不依赖其他语言。只支持 Windows Intel/AMD x64 与 Apple 芯片 Mac；import、定位、doctor、launch 不隐式触发下载。
+
+下载目录不同于浏览器安装目录；下载完成返回 downloaded，打开原生安装器/DMG 返回 installer_started，不表示安装、MCP 定位、登录或兼容性已经验证。Python 可复用已登记且文件完整的既有安装，返回 existing_installation。安装器需要交互时由用户完成，不猜静默安装参数。
+
+HTTPS 主机名与证书验证不能关闭，禁止跳转 HTTP。返回计算的 SHA-256；仅在调用者提供可信预期哈希并成功比对时 checksumVerified 才为 true。具体接口、下载地址和平台限制见 INSTALLATION.md / INSTALLATION.zh-CN.md。本轮未下载或执行安装包，也未运行相关测试。
+
 源码交付日期：2026-11-06。实现语言：Python、Node.js/TypeScript、Java、Go。
 本文定义代码契约，不是已通过测试的报告。所有客户端共用 stdio MCP、Runtime、账号并发额度和浏览器输入层。
 

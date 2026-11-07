@@ -10,7 +10,27 @@ KingAI Browser 将**持久化指纹环境、Chromium/Blink 源码级修改、浏
 
 **SDK 0.3.0 · MIT 开源协议 · 无需 Playwright · 无需 HTTP 服务**
 
-本仓库开源客户端 SDK、调用示例和测试。浏览器可从[官方网站](https://www.kingaibrowser.cn/)、[备用网站](https://kingaibrowser.ccwu.cc/)或 [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases) 下载。目前尚未发布 PyPI、npm、Maven 公共包，请按下文从源码安装。
+本仓库开源客户端 SDK、调用示例和测试。浏览器可从[官方网站](https://www.kingaibrowser.cn/)、[备用网站](https://kingaibrowser.ccwu.cc/)或 [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases) 下载。Python SDK 0.3.0 已[发布到 PyPI](https://pypi.org/project/kingai-browser/0.3.0/)，可运行 `python -m pip install kingai-browser` 在线安装；npm、Maven 公共包尚未发布。
+
+## 浏览器下载安装
+
+支持 Windows Intel/AMD x64 和 Apple 芯片 Mac，不支持 Windows ARM、32 位 Windows 或 Intel Mac。四语言均提供原生下载实现；显式安装命令可下载并打开安装向导/DMG，仍需用户完成安装，不是静默安装。
+
+```powershell
+python -m kingai_browser install --download-only
+# Download and open the installer UI
+python -m kingai_browser install
+```
+
+```python
+from kingai_browser import install
+result = install(download_only=True)
+print(result["status"], result["installerPath"])
+```
+
+Windows 默认下载到 D 盘；下载目录不是浏览器安装目录。证书校验保持开启，IP 证书不可信或不匹配会失败；可传可信 SHA-256 校验文件。安装后打开 Manager 登录并运行 doctor。新增下载/安装入口本轮未下载或执行安装包，未运行构建、检查或测试。
+
+[完整安装说明](INSTALLATION.zh-CN.md)
 
 ## 六大功能
 
@@ -51,6 +71,10 @@ KingAI Browser 不只是自动化 SDK，也是集网页工具、独立指纹环�
 连接释放后，原 Session 对象不能继续操作保留窗口。可在 Manager 中关闭，或由新客户端发现真实会话、在授权允许时显式 attach 后关闭；SDK 不自动重连。Java closeBrowser() 在客户端已关闭时抛 SESSION_DISCONNECTED。
 
 ## 快速入口与诊断
+
+先看[四语言入口区别与用法](docs/SDK_ENTRY_POINTS.zh-CN.md)：包括 launch、显式客户端、Agent facade 的能力矩阵、示例和生命周期。BrowserAutomation 当前在 Python/Node 提供，Java/Go 目前只有客户端与会话层。[English](docs/SDK_ENTRY_POINTS.md)。
+
+先选适合自己的 Python 入口：[launch、KingAI、BrowserAutomation 的区别与完整用法](python/ENTRY_POINTS.zh-CN.md)，包含参数、返回对象、DOM 获取及退出后窗口是否保留。[English](python/ENTRY_POINTS.md)。
 
 ```python
 from kingai_browser import launch
@@ -118,7 +142,7 @@ git clone https://github.com/KingOX-cpp/KingAIBrowser.git D:\code\KingAIBrowser
 cd D:\code\KingAIBrowser
 ```
 
-定位优先级：SDK 显式参数 → `KINGAI_MCP_EXECUTABLE` → 管理器安装登记。SDK 不扫描磁盘、不自动下载浏览器。目前示例测试脚本面向 Windows；源码中的其他平台路径不代表对应浏览器发行版已经验证。
+定位优先级：SDK 显式参数 → `KINGAI_MCP_EXECUTABLE` → 管理器安装登记。路径定位和 launch 不扫描磁盘、不自动下载浏览器；需要下载时显式调用上面的 install 入口。目前示例测试脚本面向 Windows；源码中的其他平台路径不代表对应浏览器发行版已经验证。
 
 ## 完整自动化示例
 

@@ -5,8 +5,24 @@ let mcpExecutable;
 const offset=args.indexOf('--executable');
 if(offset!==-1){mcpExecutable=args[offset+1];args.splice(offset,2);if(!mcpExecutable)throw new Error('--executable requires an absolute MCP path');}
 const command=args[0]||'info';
-if(args.length>1||!['info','tools','profiles','doctor'].includes(command)){
-  process.stderr.write('Usage: kingai-browser [info|tools|profiles|doctor] [--executable PATH]\n');process.exitCode=2;
+if(command==='install') {
+  try {
+    if(mcpExecutable!==undefined)throw new Error('install uses --download-dir, not --executable');
+    const options={};
+    for(let index=1;index<args.length;index++) {
+      const flag=args[index];
+      if(flag==='--download-only')options.downloadOnly=true;
+      else if(flag==='--download-dir'||flag==='--sha256') {
+        const value=args[++index];
+        if(!value||value.startsWith('--'))throw new Error(`Missing value for ${flag}`);
+        options[flag==='--download-dir'?'downloadDir':'sha256']=value;
+      } else throw new Error(`Unknown install option: ${flag}`);
+    }
+    const {install}=await import('./installer.mjs');
+    process.stdout.write(JSON.stringify(await install(options),null,2)+'\n');
+  } catch(error){process.stderr.write(JSON.stringify({code:error.code??'INSTALL_FAILED',message:error.message})+'\n');process.exitCode=1;}
+} else if(args.length>1||!['info','tools','profiles','doctor'].includes(command)){
+  process.stderr.write('Usage: kingai-browser [info|tools|profiles|doctor] [--executable PATH]; install [--download-dir PATH] [--download-only] [--sha256 HEX]\n');process.exitCode=2;
 } else if(command==='doctor') {
   const {doctor}=await import('./doctor.mjs');
   const report=await doctor(mcpExecutable);

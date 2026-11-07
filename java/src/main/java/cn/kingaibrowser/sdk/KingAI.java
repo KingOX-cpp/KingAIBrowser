@@ -187,6 +187,10 @@ public final class KingAI implements AutoCloseable {
     public Session attach(String id){return new Session(this,id,call("browser_attach",Map.of("session_id",id)));}
     private static Map<String,Object> copy(Map<String,?> source){Map<String,Object>a=new LinkedHashMap<>();if(source!=null)a.putAll(source);return a;}
 
+    public static BrowserInstaller.Result install(Path downloadDir, boolean downloadOnly, String expectedSha256) throws IOException, InterruptedException {
+        BrowserInstaller.Result downloaded = BrowserInstaller.download(downloadDir, expectedSha256);
+        return downloadOnly ? downloaded : BrowserInstaller.openInstaller(downloaded);
+    }
     public static Session launch() throws IOException { return launch(new Options(), null); }
     public static Session launch(Options options, String profileId) throws IOException {
         KingAI api = new KingAI(options);

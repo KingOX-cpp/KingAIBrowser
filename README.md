@@ -10,7 +10,27 @@ KingAI Browser combines persistent fingerprint profiles, Chromium/Blink source-l
 
 **SDK 0.3.0 · MIT License · No Playwright dependency · No HTTP service required**
 
-This repository contains open-source client SDKs, samples and tests. Download KingAI Browser from the [official website](https://www.kingaibrowser.cn/), [alternative website](https://kingaibrowser.ccwu.cc/) or [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases). PyPI/npm/Maven packages have not been published; use source installation below.
+This repository contains open-source client SDKs, samples and tests. Download KingAI Browser from the [official website](https://www.kingaibrowser.cn/), [alternative website](https://kingaibrowser.ccwu.cc/) or [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases). Python SDK 0.3.0 is [published on PyPI](https://pypi.org/project/kingai-browser/0.3.0/): `python -m pip install kingai-browser`. npm/Maven packages remain unpublished.
+
+## Download the browser installer
+
+Supports Windows Intel/AMD x64 and Apple Silicon macOS only, not Windows ARM, 32-bit Windows or Intel Mac. Each language has a native downloader. Explicit install calls can download and open the installer/DMG; finish its UI steps yourself. This is not silent installation.
+
+```powershell
+python -m kingai_browser install --download-only
+# Download and open the installer UI
+python -m kingai_browser install
+```
+
+```python
+from kingai_browser import install
+result = install(download_only=True)
+print(result["status"], result["installerPath"])
+```
+
+Windows downloads default to D:. The download directory is not the browser installation directory. TLS verification stays enabled; invalid/mismatched IP certificates fail. Supply a trusted SHA-256 to verify the payload. After installation, open Manager, sign in and run doctor. No installer was downloaded or executed, and no build/check/test was run in this change.
+
+[Full installation guide](INSTALLATION.md)
 
 ## Six core features
 
@@ -51,6 +71,10 @@ Lifecycle update: Python launch contexts and Java automatic Session resource cle
 After disconnecting, the original Session can no longer operate the retained window. Close it in Manager, or discover the real active session through a new client and explicitly attach if authorized. No automatic reconnection occurs. Java closeBrowser() throws SESSION_DISCONNECTED if its client is closed.
 
 ## Quick entry and diagnostics
+
+Start with the [four-language entry-point guide](docs/SDK_ENTRY_POINTS.md): launch, explicit client and Agent facade capabilities, examples and lifecycle differences. Python/Node provide BrowserAutomation; Java/Go currently provide clients and sessions without that facade. [中文](docs/SDK_ENTRY_POINTS.zh-CN.md).
+
+Choose the right Python entry: [launch, KingAI and BrowserAutomation explained](python/ENTRY_POINTS.md), with complete usage examples and lifecycle rules. [中文](python/ENTRY_POINTS.zh-CN.md).
 
 ```python
 from kingai_browser import launch
@@ -118,7 +142,7 @@ git clone https://github.com/KingOX-cpp/KingAIBrowser.git D:\code\KingAIBrowser
 cd D:\code\KingAIBrowser
 ```
 
-Discovery: explicit SDK option → `KINGAI_MCP_EXECUTABLE` → per-user Manager record. No disk scanning or automatic browser download. The sample runner targets Windows; other platform paths in the SDK are not proof of tested browser availability.
+Discovery: explicit SDK option → `KINGAI_MCP_EXECUTABLE` → per-user Manager record. Discovery/launch do not scan disks or download a browser; use the explicit install entry above when needed. The sample runner targets Windows; other platform paths in the SDK are not proof of tested browser availability.
 
 ## Complete automation examples
 

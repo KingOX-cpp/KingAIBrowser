@@ -321,6 +321,9 @@ def launch(profile_id=None, *, headless=False, temporary=False, **client_options
 
 __all__.append("launch")
 
+from _kingai_installer import install
+__all__.append("install")
+
 # Optional high-level action/observation facade; no OpenManus dependency.
 from _kingai_automation import BrowserAutomation
 __all__.append('BrowserAutomation')
@@ -329,13 +332,30 @@ __all__.extend(['AsyncKingAI', 'AsyncBrowserSession'])
 
 
 def main():
-    """Read-only SDK discovery/compatibility diagnostics; never starts a browser."""
+    """SDK diagnostics and explicit installer download/launch commands."""
     import argparse
     import json
-    parser = argparse.ArgumentParser(description="KingAI SDK diagnostics (no browser launch)")
-    parser.add_argument("command", choices=["info", "tools", "profiles", "doctor"], nargs="?", default="info")
+    parser = argparse.ArgumentParser(description="KingAI SDK diagnostics and installer management")
+    parser.add_argument("command", choices=["info", "tools", "profiles", "doctor", "install"], nargs="?", default="info")
     parser.add_argument("--executable", help="Absolute installed MCP executable path")
+    parser.add_argument("--download-dir", help="Absolute installer download directory, not browser installation directory")
+    parser.add_argument("--download-only", action="store_true", help="Download without opening the installer")
+    parser.add_argument("--sha256", help="Trusted expected installer checksum")
+    parser.add_argument("--no-reuse-existing", action="store_true", help="Download even if MCP discovery already finds an installation")
     args = parser.parse_args()
+    if args.command == "install":
+        if args.executable:
+            parser.error("--executable is for diagnostics; install uses --download-dir")
+        try:
+            result = install(download_dir=args.download_dir, download_only=args.download_only,
+                             sha256=args.sha256, reuse_existing=not args.no_reuse_existing)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0
+        except Exception as error:
+            print(json.dumps({"code": getattr(error, "code", "INSTALL_FAILED"), "message": str(error)}, ensure_ascii=False))
+            return 1
+    if args.download_dir or args.download_only or args.sha256 or args.no_reuse_existing:
+        parser.error("Installer options require the install command")
     if args.command == "doctor":
         from _kingai_doctor import doctor
         report = doctor(args.executable, client_factory=KingAI, client_version=__version__)

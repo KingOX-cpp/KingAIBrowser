@@ -8,6 +8,7 @@ import { ErrorCode, McpError } from '@modelcontextprotocol/sdk/types.js';
 import { childEnvironment, decodeTool, discoverMcp, KingAIError } from './discovery.mjs';
 export { discoverMcp, KingAIError };
 export { BrowserAutomation } from './automation.mjs';
+export { install } from './installer.mjs';
 const scopes = new AsyncLocalStorage();
 
 export async function launch({ profileId, headless = false, temporary = false, ...clientOptions } = {}) {
