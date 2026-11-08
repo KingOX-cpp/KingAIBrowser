@@ -6,13 +6,22 @@
   <p>简体中文 | <a href="README.md">English</a> | <a href="https://www.kingaibrowser.cn/">官方网站</a> | <a href="https://kingaibrowser.ccwu.cc/">备用网站</a> | <a href="https://www.kingaibrowser.cn/help/zh/">使用帮助</a></p>
 </div>
 
-KingAI Browser 将**持久化指纹环境、Chromium/Blink 源码级修改、浏览器原生自动化**结合起来。AI Agent 通过 **stdio MCP** 操作浏览器，开发者通过 **Python、Node.js、Java、Go SDK** 编写自动化程序，两种方式共用安装版 MCP、Runtime 和浏览器执行内核。
+[![PyPI](https://img.shields.io/pypi/v/kingai-browser.svg)](https://pypi.org/project/kingai-browser/)
+[![npm](https://img.shields.io/npm/v/%40kingaibrowser%2Fbrowser-api.svg)](https://www.npmjs.com/package/@kingaibrowser/browser-api)
+[![MIT License](https://img.shields.io/badge/SDK_license-MIT-blue.svg)](LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/KingOX-cpp/KingAIBrowser)](https://github.com/KingOX-cpp/KingAIBrowser/releases)
 
-**SDK 0.3.0 · MIT 开源协议 · 无需 Playwright · 无需 HTTP 服务**
+KingAI Browser 是面向 **AI Agent 与多账号自动化的指纹浏览器（anti-detect browser）**。持久化指纹环境隔离账号数据并保留登录状态；通过 **MCP Server** 或 Python、Node.js、Java、Go SDK 操控已安装的浏览器。
+
+如果你在寻找保留登录态的浏览器自动化方案，可以使用 KingAI 的 stdio MCP 高层接口，无需依赖 Playwright，也不对外开放无限制 raw CDP。它采用独立 API，不能直接替换现有 Playwright 代码。
+
+**Python 0.3.3 · Node.js 0.3.0 · SDK 采用 MIT 协议 · 无需 HTTP 服务**
 
 本仓库开源客户端 SDK、调用示例和测试。浏览器可从[官方网站](https://www.kingaibrowser.cn/)、[备用网站](https://kingaibrowser.ccwu.cc/)或 [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases) 下载。Python SDK 0.3.3 已[发布到 PyPI](https://pypi.org/project/kingai-browser/0.3.3/)，可运行 `python -m pip install kingai-browser` 在线安装；Node.js SDK 也已[发布到 npm](https://www.npmjs.com/package/@kingaibrowser/browser-api)；Maven 公共包尚未发布。
 
 ## 在线安装
+
+[提问或分享使用场景](https://github.com/KingOX-cpp/KingAIBrowser/discussions) · [反馈问题](https://github.com/KingOX-cpp/KingAIBrowser/issues/new/choose)
 
 Python 和 Node.js SDK 均已发布，可以直接在线安装，无需先克隆本仓库。
 
@@ -33,6 +42,22 @@ npx kingai-browser install
 第一条安装 SDK，第二条显式下载并打开浏览器安装界面。安装包默认下载到系统临时目录，由用户自行完成安装，再打开 Manager 登录；已有安装可能直接复用。这不是静默安装。Node.js 要求 22 或以上版本，npx 应在已安装该包的项目目录运行，以使用本地 kingai-browser 命令。
 
 [PyPI 包主页](https://pypi.org/project/kingai-browser/) · [npm 包主页](https://www.npmjs.com/package/@kingaibrowser/browser-api) · [完整安装说明](INSTALLATION.zh-CN.md)
+
+## 第一次自动化
+
+先安装浏览器，打开 Manager 登录，并创建唯一名为 `默认环境` 的已保存环境，再运行以下代码。示例复用该环境，不创建临时环境。
+
+```python
+from kingai_browser import launch
+
+with launch() as browser:
+    browser.new_tab("https://example.com")
+    print(browser.read())
+```
+
+退出 with 会释放连接并保留窗口；需要关闭窗口时请显式调用关闭浏览器的方法。[更多示例](examples/README.md) · [故障排查](TROUBLESHOOTING.md)。
+
+![KingAI 指纹环境管理器](images/manager-dashboard.png)
 
 ## 浏览器下载安装
 
@@ -86,7 +111,6 @@ KingAI Browser 不只是自动化 SDK，也是集网页工具、独立指纹环�
 
 **0.1 / 0.9 是官网记录的特定配置、网络和测试流程下的实测对照，不是本仓库 SDK 测试结果，也不构成对任意网站、风控或验证码的通过保证。** 代理质量、账号历史和实际操作行为都会影响结果；humanize 需要有效账号权益。
 
-![KingAI 指纹环境管理器](images/manager-dashboard.png)
 
 生命周期更新：Python launch 上下文和 Java Session 自动资源退出会 detach 并保留窗口。显式关闭分别使用 Python close()/close_browser()、Node close()/closeBrowser()、Java closeBrowser()、Go Close()/CloseBrowser()。新增 ownership、launch、doctor 均未执行验证，历史 17 项测试不覆盖这些改动。
 

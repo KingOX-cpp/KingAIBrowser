@@ -6,13 +6,22 @@
   <p><a href="README.zh-CN.md">简体中文</a> | English | <a href="https://www.kingaibrowser.cn/">Official Website & Download</a> | <a href="https://kingaibrowser.ccwu.cc/">Alternative Website</a> | <a href="https://www.kingaibrowser.cn/help/en/">Help</a></p>
 </div>
 
-KingAI Browser combines persistent fingerprint profiles, Chromium/Blink source-level modifications and browser-native automation. AI agents use its **stdio MCP server**; applications use the **four SDKs in this repository**. Both paths share the installed MCP, Runtime and browser execution layer.
+[![PyPI](https://img.shields.io/pypi/v/kingai-browser.svg)](https://pypi.org/project/kingai-browser/)
+[![npm](https://img.shields.io/npm/v/%40kingaibrowser%2Fbrowser-api.svg)](https://www.npmjs.com/package/@kingaibrowser/browser-api)
+[![MIT License](https://img.shields.io/badge/SDK_license-MIT-blue.svg)](LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/KingOX-cpp/KingAIBrowser)](https://github.com/KingOX-cpp/KingAIBrowser/releases)
 
-**SDK 0.3.0 · MIT License · No Playwright dependency · No HTTP service required**
+KingAI Browser is an **anti-detect browser for AI agents and multi-account automation**. Saved fingerprint profiles isolate account data and retain login sessions. Use the **MCP server** or Python, Node.js, Java and Go SDKs to automate the installed browser.
+
+For developers looking for a Playwright alternative for logged-in automation, KingAI provides high-level tools over stdio MCP, without a Playwright dependency or a public raw CDP endpoint. This is a different API, not a drop-in Playwright replacement.
+
+**Python 0.3.3 · Node.js 0.3.0 · MIT SDKs · No HTTP service required**
 
 This repository contains open-source client SDKs, samples and tests. Download KingAI Browser from the [official website](https://www.kingaibrowser.cn/), [alternative website](https://kingaibrowser.ccwu.cc/) or [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases). Python SDK 0.3.3 is [published on PyPI](https://pypi.org/project/kingai-browser/0.3.3/): `python -m pip install kingai-browser`. The Node.js SDK is also available on [npm](https://www.npmjs.com/package/@kingaibrowser/browser-api); Maven publication is still pending.
 
 ## Install online
+
+[Ask a question or share a workflow](https://github.com/KingOX-cpp/KingAIBrowser/discussions) · [Report a bug](https://github.com/KingOX-cpp/KingAIBrowser/issues/new/choose)
 
 Both Python and Node.js SDKs are published. You do not need to clone this repository to install them.
 
@@ -33,6 +42,22 @@ npx kingai-browser install
 The first command installs the SDK; the second explicitly downloads and opens the browser installer. Installers use the system temporary directory by default; finish the installation UI yourself, then open Manager and sign in. An existing installation may be reused. Browser installation is not a silent process. Node.js requires version 22 or newer. Run npx in the project where you installed the package so it resolves the local kingai-browser command.
 
 [PyPI package](https://pypi.org/project/kingai-browser/) · [npm package](https://www.npmjs.com/package/@kingaibrowser/browser-api) · [Full installation guide](INSTALLATION.md)
+
+## First automation
+
+Install the browser, open Manager, sign in and create one saved profile named exactly `默认环境` before running this example. It reuses that profile; it does not create a temporary one.
+
+```python
+from kingai_browser import launch
+
+with launch() as browser:
+    browser.new_tab("https://example.com")
+    print(browser.read())
+```
+
+Context exit detaches and preserves the window. Use an explicit browser close when you want to close it. [More examples](examples/README.md) · [Troubleshooting](TROUBLESHOOTING.md).
+
+![KingAI fingerprint profile manager](images/manager-dashboard.png)
 
 ## Download the browser installer
 
@@ -86,7 +111,6 @@ The following reproduces the website's comparison and browser implementation des
 
 **The website's 0.1 / 0.9 comparison was measured under specific configuration, network and test conditions. It is not an SDK test result or a guarantee of acceptance by any website, anti-fraud system or CAPTCHA.** Proxy quality, account history and actual behavior affect results; humanize requires valid account entitlement.
 
-![KingAI fingerprint environment manager](images/manager-dashboard.png)
 
 Lifecycle update: Python launch contexts and Java automatic Session resource cleanup detach and preserve windows. Explicit browser shutdown uses Python close()/close_browser(), Node close()/closeBrowser(), Java closeBrowser(), or Go Close()/CloseBrowser(). New ownership cases and launch/doctor changes are unexecuted; the historical 17-test result does not cover them.
 
