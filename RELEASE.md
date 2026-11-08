@@ -1,5 +1,11 @@
 # Source installation and release status
 
+## Prepared releases: Python 0.3.4 / Node.js 0.3.1
+
+These source versions update registry descriptions and search keywords, align client version reporting, and include the existing installer progress implementations. Publication is pending account verification; the public versions remain Python 0.3.3 and Node.js 0.3.0 until the registries confirm otherwise.
+
+Validation on 2026-11-08: 12 simulated Python installer tests passed; Python wheel/sdist build and Twine metadata checks passed; isolated Python installation, imports, CLI help and metadata checks passed. The Node tarball was installed in an isolated directory; its main exports, version and keywords passed checks, and invalid install arguments were rejected. No browser installer was downloaded or executed. This is not a real-browser compatibility test.
+
 Python 0.3.3 adds stderr progress (size, percentage when known, speed, elapsed time and ETA), removes the ten-minute total download deadline, and adds --quiet / --network-timeout. Python and Node.js packages are now published on PyPI and npm. Java/Go progress implementations remain local source changes. This documentation update did not build or test any SDK.
 
 ## Python 0.3.2: system temporary downloads

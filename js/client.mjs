@@ -49,7 +49,7 @@ export class KingAI {
       const command = await discoverMcp(this._executable);
       if (this._closed) throw new Error('Client closed during discovery');
       this._transport = new StdioClientTransport({ command, cwd: dirname(command), env: this._env, stderr: 'inherit' });
-      this._client = new Client({ name: 'kingai-node', version: '0.3.0' }, { capabilities: {} });
+      this._client = new Client({ name: 'kingai-node', version: '0.3.1' }, { capabilities: {} });
       this._client.onclose = () => { this._dead = true; };
       await this._client.connect(this._transport, { timeout: this._timeoutMs });
       if (!this._client.getServerCapabilities()?.tools) throw new Error('The installed MCP server does not advertise tools');

@@ -15,6 +15,8 @@ KingAI Browser 是面向 **AI Agent 与多账号自动化的指纹浏览器（an
 
 如果你在寻找保留登录态的浏览器自动化方案，可以使用 KingAI 的 stdio MCP 高层接口，无需依赖 Playwright，也不对外开放无限制 raw CDP。它采用独立 API，不能直接替换现有 Playwright 代码。
 
+**基于 Chromium 155 内核（155.0.8059.40）。** KingAI 提供持久化、相互隔离的账号环境，属于 antidetect / stealth browser。可用于规划经授权的电商（e-commerce）账号操作与保留登录态的 Agent 任务。stealth 指指纹与自动化信号防护，不是 undetected（永不被检测）承诺；Playwright/Puppeteer 用户需使用 KingAI 自己的 MCP/SDK API。
+
 **Python 0.3.3 · Node.js 0.3.0 · SDK 采用 MIT 协议 · 无需 HTTP 服务**
 
 本仓库开源客户端 SDK、调用示例和测试。浏览器可从[官方网站](https://www.kingaibrowser.cn/)、[备用网站](https://kingaibrowser.ccwu.cc/)或 [GitHub Releases](https://github.com/KingOX-cpp/KingAIBrowser/releases) 下载。Python SDK 0.3.3 已[发布到 PyPI](https://pypi.org/project/kingai-browser/0.3.3/)，可运行 `python -m pip install kingai-browser` 在线安装；Node.js SDK 也已[发布到 npm](https://www.npmjs.com/package/@kingaibrowser/browser-api)；Maven 公共包尚未发布。

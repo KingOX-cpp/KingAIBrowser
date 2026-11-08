@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kingai-browser"
-version = "0.3.3"
+version = "0.3.4"
 description = "Fingerprint browser SDK for AI agents and persistent multi-account automation over stdio MCP"
 readme = "PYPI_README.md"
 license = "MIT"

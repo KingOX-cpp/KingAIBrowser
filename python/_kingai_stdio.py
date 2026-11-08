@@ -88,7 +88,7 @@ class StdioTransport:
         try:
             info = self.request("initialize", {
                 "protocolVersion": "2025-11-25", "capabilities": {},
-                "clientInfo": {"name": "kingai-python", "version": "0.3.0"},
+                "clientInfo": {"name": "kingai-python", "version": "0.3.4"},
             }, tool=False)
             if not isinstance(info, dict) or info.get("protocolVersion") not in self.VERSIONS:
                 raise failure("MCP_VERSION_MISMATCH", "The installed MCP server negotiated an unsupported protocol version")

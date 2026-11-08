@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文 | [Project / 项目](../README.md)
 
-**SDK 0.3.0 · MIT · Node.js 22+**
+**SDK 0.3.1 · MIT · Node.js 22+**
 
 本库通过 stdio 调用已安装的 KingAI MCP，不需要 HTTP 服务或 Playwright。先安装浏览器并登录，MCP/Runtime 必须支持所需工具。
 

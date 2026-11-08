@@ -2,7 +2,7 @@
 from _kingai_discovery import discover_mcp
 
 
-def doctor(executable=None, *, client_factory=None, client_version="0.3.0"):
+def doctor(executable=None, *, client_factory=None, client_version="0.3.4"):
     if client_factory is None:
         from kingai_browser import KingAI
         client_factory = KingAI

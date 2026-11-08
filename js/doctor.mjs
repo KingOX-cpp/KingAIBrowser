@@ -3,7 +3,7 @@ import { KingAI, discoverMcp } from './client.mjs';
 /** Inspect installation and MCP capabilities without launching a browser. */
 export async function doctor(mcpExecutable) {
   const report = {
-    clientVersion: '0.3.0', status: 'ok', checks: [],
+    clientVersion: '0.3.1', status: 'ok', checks: [],
     login: { status: 'unknown', reason: 'No read-only authentication tool is exposed by this SDK contract' },
     runtime: 'not_verified', stderr: 'forwarded_to_parent_stderr',
   };

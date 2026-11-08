@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md) | [Project / 项目](../README.md)
 
-**SDK 0.3.0 · MIT · Node.js 22+**
+**SDK 0.3.1 · MIT · Node.js 22+**
 
 Calls the installed KingAI MCP over stdio. No HTTP service or Playwright is required. Install the browser, sign in and use matching MCP/Runtime components first.
 

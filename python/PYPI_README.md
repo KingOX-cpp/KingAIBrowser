@@ -107,3 +107,7 @@ Browser download/installation and real-site automation have not been validated a
 ## License
 
 MIT. Retain copyright, license and applicable third-party notices. This package contains client SDK code; third-party notices are included in the distribution.
+
+## Browser engine and workflows
+
+KingAI Browser is based on Chromium 155. This antidetect browser SDK provides persistent fingerprint profiles and saved login sessions for AI agents and multi-account automation through stdio MCP. Stealth features reduce automation signals; they do not guarantee undetected access. Potential workflows include authorized e-commerce account operations. No Playwright/Puppeteer API compatibility is implied.

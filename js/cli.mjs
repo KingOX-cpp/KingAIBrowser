@@ -8,21 +8,23 @@ const command=args[0]||'info';
 if(command==='install') {
   try {
     if(mcpExecutable!==undefined)throw new Error('install uses --download-dir, not --executable');
-    const options={};
+    const options={progress:true};
     for(let index=1;index<args.length;index++) {
       const flag=args[index];
       if(flag==='--download-only')options.downloadOnly=true;
-      else if(flag==='--download-dir'||flag==='--sha256') {
+      else if(flag==='--quiet')options.progress=false;
+      else if(flag==='--download-dir'||flag==='--sha256'||flag==='--network-timeout') {
         const value=args[++index];
         if(!value||value.startsWith('--'))throw new Error(`Missing value for ${flag}`);
-        options[flag==='--download-dir'?'downloadDir':'sha256']=value;
+        if(flag==='--network-timeout')options.networkTimeoutMs=Number(value)*1000;
+        else options[flag==='--download-dir'?'downloadDir':'sha256']=value;
       } else throw new Error(`Unknown install option: ${flag}`);
     }
     const {install}=await import('./installer.mjs');
     process.stdout.write(JSON.stringify(await install(options),null,2)+'\n');
   } catch(error){process.stderr.write(JSON.stringify({code:error.code??'INSTALL_FAILED',message:error.message})+'\n');process.exitCode=1;}
 } else if(args.length>1||!['info','tools','profiles','doctor'].includes(command)){
-  process.stderr.write('Usage: kingai-browser [info|tools|profiles|doctor] [--executable PATH]; install [--download-dir PATH] [--download-only] [--sha256 HEX]\n');process.exitCode=2;
+  process.stderr.write('Usage: kingai-browser [info|tools|profiles|doctor] [--executable PATH]; install [--download-dir PATH] [--download-only] [--sha256 HEX] [--quiet] [--network-timeout SECONDS]\n');process.exitCode=2;
 } else if(command==='doctor') {
   const {doctor}=await import('./doctor.mjs');
   const report=await doctor(mcpExecutable);

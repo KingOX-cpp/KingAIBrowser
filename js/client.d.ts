@@ -12,7 +12,7 @@ export class KingAIError extends Error { code: string; details: Arguments; const
 export function discoverMcp(executable?: string): Promise<string>;
 export interface LaunchOptions extends Options { profileId?: string; headless?: boolean; temporary?: boolean }
 export function launch(options?: LaunchOptions): Promise<BrowserSession>;
-export interface InstallOptions { downloadDir?: string; downloadOnly?: boolean; sha256?: string }
+export interface InstallOptions { downloadDir?: string; downloadOnly?: boolean; sha256?: string; progress?: boolean; networkTimeoutMs?: number }
 export interface InstallResult { status: 'downloaded'|'installer_started'; platform: 'windows-x64'|'macos-arm64'; installerPath: string; sha256: string; checksumVerified: boolean; bytes: number; url: string; nextStep?: string }
 export function install(options?: InstallOptions): Promise<InstallResult>;
 export class KingAI {
