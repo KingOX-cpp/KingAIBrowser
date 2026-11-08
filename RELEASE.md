@@ -1,8 +1,8 @@
 # Source installation and release status
 
-## Prepared releases: Python 0.3.4 / Node.js 0.3.1
+## Published releases: Python 0.3.4 / Node.js 0.3.1
 
-These source versions update registry descriptions and search keywords, align client version reporting, and include the existing installer progress implementations. Publication is pending account verification; the public versions remain Python 0.3.3 and Node.js 0.3.0 until the registries confirm otherwise.
+These releases update registry descriptions and search keywords, align client version reporting, and include the existing installer progress implementations. Both were published on 2026-11-08: Python 0.3.4 to PyPI and Node.js 0.3.1 to npm. Older releases remain available and were not overwritten.
 
 Validation on 2026-11-08: 12 simulated Python installer tests passed; Python wheel/sdist build and Twine metadata checks passed; isolated Python installation, imports, CLI help and metadata checks passed. The Node tarball was installed in an isolated directory; its main exports, version and keywords passed checks, and invalid install arguments were rejected. No browser installer was downloaded or executed. This is not a real-browser compatibility test.
 
@@ -16,14 +16,14 @@ Python validation: 5 installer regression tests using fake download/process resp
 
 [English](README.md) · [中文](README.zh-CN.md) · [Samples/tests](SAMPLES.md)
 
-SDK version: **0.3.0**. API contract: **1**. This repository publishes source code, not browser binaries or native MCP/Runtime components.
+Latest published SDK versions: **Python 0.3.4 · Node.js 0.3.1**. API contract: **1**. This repository publishes source code, not browser binaries or native MCP/Runtime components.
 
 ## Package status
 
 | SDK | Source location | Package identity | Distribution status |
 | --- | --- | --- | --- |
-| Python | python/ | kingai-browser | PyPI 0.3.3 published on 2026-11-07; installer progress regressions and online CLI checks passed |
-| Node.js / TypeScript | js/ | @kingaibrowser/browser-api | npm 0.3.0 published; online installation available |
+| Python | python/ | kingai-browser | PyPI 0.3.4 published on 2026-11-08; wheel and sdist uploaded, registry metadata verified |
+| Node.js / TypeScript | js/ | @kingaibrowser/browser-api | npm 0.3.1 published on 2026-11-08; online installation available |
 | Java | java/ | cn.kingaibrowser.sdk:kingai-browser:0.3.0 | Local Maven install; no Maven Central release |
 | Go | go/ | github.com/KingOX-cpp/KingAIBrowser/go | Local replace supported; no version tag claimed |
 

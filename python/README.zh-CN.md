@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文 | [Project / 项目](../README.md)
 
-**SDK 0.3.3 · MIT · Python 3.10+**
+**SDK 0.3.4 · MIT · Python 3.10+**
 
 **首次使用请先看：[launch、KingAI、BrowserAutomation 详细区别与用法](ENTRY_POINTS.zh-CN.md)**，包含入口选择、完整示例、DOM/状态区别和连接/窗口生命周期速查。[English](ENTRY_POINTS.md)。
 
@@ -71,7 +71,7 @@ python -m pip install --cache-dir D:/code/kingai-sdk-cache/pip ./python
 $env:KINGAI_MCP_EXECUTABLE = 'D:\Apps\KingAIBrowser\KingAIMcpServer.exe'
 ```
 
-示例路径需替换。定位顺序为显式 SDK 参数、环境变量、管理器登记。不能把浏览器主程序当 MCP。Python SDK 0.3.3 已[发布到 PyPI](https://pypi.org/project/kingai-browser/0.3.3/)，可执行 `python -m pip install kingai-browser`。本次发布缓存与输出均保存在 F:\kingai-pypi。
+示例路径需替换。定位顺序为显式 SDK 参数、环境变量、管理器登记。不能把浏览器主程序当 MCP。Python SDK 0.3.4 已[发布到 PyPI](https://pypi.org/project/kingai-browser/0.3.4/)，可执行 `python -m pip install kingai-browser`。
 
 ## 从完整示例开始
 

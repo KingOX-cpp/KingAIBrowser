@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md) | [Project / 项目](../README.md)
 
-**SDK 0.3.3 · MIT · Python 3.10+**
+**SDK 0.3.4 · MIT · Python 3.10+**
 
 **New to the API? Read [launch vs KingAI vs BrowserAutomation](ENTRY_POINTS.md)** for entry-point selection, full examples, DOM/state differences and a connection/window lifecycle table. [中文详细说明](ENTRY_POINTS.zh-CN.md).
 
@@ -71,7 +71,7 @@ python -m pip install --cache-dir D:/code/kingai-sdk-cache/pip ./python
 $env:KINGAI_MCP_EXECUTABLE = 'D:\Apps\KingAIBrowser\KingAIMcpServer.exe'
 ```
 
-Replace the example path. Discovery uses an explicit SDK option, then the environment variable, then the Manager record. Do not pass the main browser executable. Python SDK 0.3.3 is available on [PyPI](https://pypi.org/project/kingai-browser/0.3.3/): `python -m pip install kingai-browser`. Publication caches and outputs for this release were kept under F:\kingai-pypi.
+Replace the example path. Discovery uses an explicit SDK option, then the environment variable, then the Manager record. Do not pass the main browser executable. Python SDK 0.3.4 is available on [PyPI](https://pypi.org/project/kingai-browser/0.3.4/): `python -m pip install kingai-browser`.
 
 ## Start with a complete example
 
