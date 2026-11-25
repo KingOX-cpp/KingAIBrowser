@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文 | [Project / 项目](../README.md)
 
-**SDK 0.3.1 · MIT · Node.js 22+**
+**SDK 0.3.2 · MIT · Node.js 22+**
 
 本库通过 stdio 调用已安装的 KingAI MCP，不需要 HTTP 服务或 Playwright。先安装浏览器并登录，MCP/Runtime 必须支持所需工具。
 
@@ -147,3 +147,11 @@ Every installed tool is available through generic `call` / `Call`; convenience m
 [SAMPLES.md](../SAMPLES.md) records earlier fixture tests. New examples, documentation and renames have not been built, checked or tested in this task. / 旧模拟测试不代表新增示例已实机验证；本轮未运行构建、检查或测试。
 
 MIT: retain copyright/license and applicable third-party notices. / 允许传播、修改与商用，保留版权、许可及适用的第三方声明。
+
+## 稳定任务归属标识
+
+可选的稳定标识用于同一注册下的跨进程任务恢复，不是密码或访问凭据。独立注册使用不同标识；同一标识的进程有意共享逻辑 owner。不配置时仍使用随机进程归属。任务恢复还需要原生 MCP/Runtime 支持和当前环境授权，SDK 不会自动重连或重放操作。
+
+```javascript
+const api = new KingAI({ ownerId: "my-agent-registration" });
+```

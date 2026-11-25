@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md) | [Project / 项目](../README.md)
 
-**SDK 0.3.1 · MIT · Node.js 22+**
+**SDK 0.3.2 · MIT · Node.js 22+**
 
 Calls the installed KingAI MCP over stdio. No HTTP service or Playwright is required. Install the browser, sign in and use matching MCP/Runtime components first.
 
@@ -146,3 +146,11 @@ Every installed tool is available through generic `call` / `Call`; convenience m
 [SAMPLES.md](../SAMPLES.md) records earlier fixture tests. New examples, documentation and renames have not been built, checked or tested in this task. / 旧模拟测试不代表新增示例已实机验证；本轮未运行构建、检查或测试。
 
 MIT: retain copyright/license and applicable third-party notices. / 允许传播、修改与商用，保留版权、许可及适用的第三方声明。
+
+## Stable task owner registration
+
+An optional stable label supports cross-process task recovery for the same registration. It is not a password or access credential. Use distinct labels for independent registrations; processes with the same label intentionally share a logical owner. Omitting it retains random process ownership. Recovery still requires compatible native MCP/Runtime and current environment authorization. The SDK does not automatically reconnect or replay actions.
+
+```javascript
+const api = new KingAI({ ownerId: "my-agent-registration" });
+```

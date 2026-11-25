@@ -20,7 +20,7 @@ def failure(code, message, **details):
     return KingAIError({"code": code, "message": message, **details})
 
 
-def child_environment(*, language, file_roots, download_dir, artifact_dir):
+def child_environment(*, language, file_roots, download_dir, artifact_dir, owner_id=None):
     # Do not copy Agent credentials, Python/Node injection flags or API tokens.
     allowed = {"systemroot", "windir", "systemdrive", "comspec", "pathext",
                "programfiles", "programfiles(x86)", "programw6432", "programdata",
@@ -33,6 +33,10 @@ def child_environment(*, language, file_roots, download_dir, artifact_dir):
         env["PATH"] = os.pathsep.join([os.path.join(root, "System32"), root])
     else:
         env["PATH"] = "/usr/bin:/bin:/usr/sbin:/sbin"
+    if owner_id is not None:
+        if not isinstance(owner_id, str) or not 1 <= len(owner_id) <= 128 or not all(c.isascii() and (c.isalnum() or c in '._:-') for c in owner_id):
+            raise ValueError('owner_id must contain 1..128 ASCII letters, digits, dot, underscore, colon or hyphen')
+        env['KINGAI_MCP_OWNER_ID'] = owner_id
     if language is not None:
         if not isinstance(language, str):
             raise ValueError("language must be a string")
@@ -88,7 +92,7 @@ class StdioTransport:
         try:
             info = self.request("initialize", {
                 "protocolVersion": "2025-11-25", "capabilities": {},
-                "clientInfo": {"name": "kingai-python", "version": "0.3.4"},
+                "clientInfo": {"name": "kingai-python", "version": "0.3.5"},
             }, tool=False)
             if not isinstance(info, dict) or info.get("protocolVersion") not in self.VERSIONS:
                 raise failure("MCP_VERSION_MISMATCH", "The installed MCP server negotiated an unsupported protocol version")
@@ -264,7 +268,7 @@ def decode_tool(result):
         if envelope["ok"] is False:
             raise KingAIError(envelope)
         if not result.get("isError", False):
-            return envelope.get("result")
+            return envelope["result"] if "result" in envelope else envelope
     if result.get("isError", False):
         raise failure("MCP_TOOL_ERROR", "MCP reported a tool error", mcpResult=result)
     raise failure("INVALID_TOOL_RESPONSE", "MCP returned no valid KingAI result envelope; inspect state before repeating the operation",

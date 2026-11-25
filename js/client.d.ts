@@ -2,6 +2,8 @@ export type Arguments = Record<string, unknown>;
 export interface Options {
   mcpExecutable?: string; timeoutMs?: number; language?: string;
   fileRoots?: string[]; downloadDir?: string; artifactDir?: string;
+  /** Stable non-secret registration label; separate registrations use distinct labels. */
+  ownerId?: string;
 }
 export interface Tool { name: string; description?: string; inputSchema: Arguments }
 export interface StartOptions { profile_id?: string; headless?: boolean; temporary?: boolean }

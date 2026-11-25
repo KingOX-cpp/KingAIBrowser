@@ -1,6 +1,6 @@
 {
   "name": "@kingaibrowser/browser-api",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Fingerprint browser SDK for AI agents and persistent multi-account automation over stdio MCP",
   "homepage": "https://www.kingaibrowser.cn",
   "repository": { "type": "git", "url": "https://github.com/KingOX-cpp/KingAIBrowser.git", "directory": "js" },

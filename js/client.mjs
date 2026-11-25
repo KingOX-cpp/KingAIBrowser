@@ -24,11 +24,11 @@ export async function launch({ profileId, headless = false, temporary = false, .
 }
 
 export class KingAI {
-  constructor({ mcpExecutable, timeoutMs = 360000, language, fileRoots, downloadDir, artifactDir } = {}) {
+  constructor({ mcpExecutable, timeoutMs = 360000, language, fileRoots, downloadDir, artifactDir, ownerId } = {}) {
     if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new TypeError('timeoutMs must be positive and finite');
     this._executable = mcpExecutable;
     this._timeoutMs = timeoutMs;
-    this._env = childEnvironment({ language, fileRoots, downloadDir, artifactDir });
+    this._env = childEnvironment({ language, fileRoots, downloadDir, artifactDir, ownerId });
     this._closed = false;
     this._dead = false;
     this._connection = undefined;
@@ -49,7 +49,7 @@ export class KingAI {
       const command = await discoverMcp(this._executable);
       if (this._closed) throw new Error('Client closed during discovery');
       this._transport = new StdioClientTransport({ command, cwd: dirname(command), env: this._env, stderr: 'inherit' });
-      this._client = new Client({ name: 'kingai-node', version: '0.3.1' }, { capabilities: {} });
+      this._client = new Client({ name: 'kingai-node', version: '0.3.2' }, { capabilities: {} });
       this._client.onclose = () => { this._dead = true; };
       await this._client.connect(this._transport, { timeout: this._timeoutMs });
       if (!this._client.getServerCapabilities()?.tools) throw new Error('The installed MCP server does not advertise tools');

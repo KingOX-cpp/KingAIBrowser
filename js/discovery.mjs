@@ -52,7 +52,7 @@ export async function discoverMcp(executable) {
   }
 }
 
-export function childEnvironment({ language, fileRoots, downloadDir, artifactDir }) {
+export function childEnvironment({ language, fileRoots, downloadDir, artifactDir, ownerId }) {
   const allowed = new Set(['systemroot', 'windir', 'systemdrive', 'comspec', 'pathext',
     'programfiles', 'programfiles(x86)', 'programw6432', 'programdata', 'userprofile',
     'appdata', 'localappdata', 'homedrive', 'homepath', 'username', 'userdomain',
@@ -60,6 +60,10 @@ export function childEnvironment({ language, fileRoots, downloadDir, artifactDir
   const env = Object.fromEntries(Object.entries(process.env).filter(([key, value]) => value !== undefined && allowed.has(key.toLowerCase())));
   const root = process.env.SystemRoot || process.env.SYSTEMROOT || 'C:\\Windows';
   env.PATH = process.platform === 'win32' ? [join(root, 'System32'), root].join(';') : '/usr/bin:/bin:/usr/sbin:/sbin';
+  if (ownerId !== undefined) {
+    if (typeof ownerId !== 'string' || ownerId.length < 1 || ownerId.length > 128 || /[^A-Za-z0-9._:-]/.test(ownerId)) throw new TypeError('ownerId must contain 1..128 ASCII letters, digits, dot, underscore, colon or hyphen');
+    env.KINGAI_MCP_OWNER_ID = ownerId;
+  }
   if (language !== undefined) {
     if (typeof language !== 'string') throw new TypeError('language must be a string');
     env.KINGAI_MCP_LANGUAGE = language;
@@ -91,7 +95,7 @@ export function decodeTool(result) {
   }
   if (envelope && typeof envelope.ok === 'boolean') {
     if (!envelope.ok) throw new KingAIError(envelope);
-    if (!result.isError) return envelope.result;
+    if (!result.isError) return Object.prototype.hasOwnProperty.call(envelope, 'result') ? envelope.result : envelope;
   }
   if (result.isError) throw new KingAIError({ code: 'MCP_TOOL_ERROR', message: 'MCP reported a tool error', mcpResult: result });
   throw new KingAIError({ code: 'INVALID_TOOL_RESPONSE', message: 'MCP returned no valid KingAI result envelope; inspect state before repeating the operation', outcomeUnknown: true, mcpResult: result });

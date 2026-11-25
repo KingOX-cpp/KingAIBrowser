@@ -8,18 +8,18 @@ from _kingai_discovery import discover_mcp
 from _kingai_stdio import KingAIError, StdioTransport, child_environment, decode_tool, failure
 
 __all__ = ["KingAI", "KingAIError", "BrowserSession", "discover_mcp"]
-__version__ = "0.3.4"
+__version__ = "0.3.5"
 
 
 class KingAI:
     """A lazy, owned MCP connection. close() disconnects; it does not close browsers."""
 
     def __init__(self, mcp_executable=None, *, timeout=360, language=None,
-                 file_roots=None, download_dir=None, artifact_dir=None):
+                 file_roots=None, download_dir=None, artifact_dir=None, owner_id=None):
         self._executable = mcp_executable
         self._timeout = timeout
         self._env = child_environment(language=language, file_roots=file_roots,
-                                      download_dir=download_dir, artifact_dir=artifact_dir)
+                                      download_dir=download_dir, artifact_dir=artifact_dir, owner_id=owner_id)
         self._lock = threading.RLock()
         self._transport = None
         self._closed = False

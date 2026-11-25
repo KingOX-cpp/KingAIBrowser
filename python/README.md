@@ -2,7 +2,7 @@
 
 English | [简体中文](README.zh-CN.md) | [Project / 项目](../README.md)
 
-**SDK 0.3.4 · MIT · Python 3.10+**
+**SDK 0.3.5 · MIT · Python 3.10+**
 
 **New to the API? Read [launch vs KingAI vs BrowserAutomation](ENTRY_POINTS.md)** for entry-point selection, full examples, DOM/state differences and a connection/window lifecycle table. [中文详细说明](ENTRY_POINTS.zh-CN.md).
 
@@ -71,7 +71,7 @@ python -m pip install --cache-dir D:/code/kingai-sdk-cache/pip ./python
 $env:KINGAI_MCP_EXECUTABLE = 'D:\Apps\KingAIBrowser\KingAIMcpServer.exe'
 ```
 
-Replace the example path. Discovery uses an explicit SDK option, then the environment variable, then the Manager record. Do not pass the main browser executable. Python SDK 0.3.4 is available on [PyPI](https://pypi.org/project/kingai-browser/0.3.4/): `python -m pip install kingai-browser`.
+Replace the example path. Discovery uses an explicit SDK option, then the environment variable, then the Manager record. Do not pass the main browser executable. Python SDK 0.3.5 is available on [PyPI](https://pypi.org/project/kingai-browser/0.3.5/): `python -m pip install kingai-browser`.
 
 ## Start with a complete example
 
@@ -142,3 +142,11 @@ Every installed tool is available through generic `call` / `Call`; convenience m
 [SAMPLES.md](../SAMPLES.md) records earlier fixture tests. New examples, documentation and renames have not been built, checked or tested in this task. / 旧模拟测试不代表新增示例已实机验证；本轮未运行构建、检查或测试。
 
 MIT: retain copyright/license and applicable third-party notices. / 允许传播、修改与商用，保留版权、许可及适用的第三方声明。
+
+## Stable task owner registration
+
+An optional stable label supports cross-process task recovery for the same registration. It is not a password or access credential. Use distinct labels for independent registrations; processes with the same label intentionally share a logical owner. Omitting it retains random process ownership. Recovery still requires compatible native MCP/Runtime and current environment authorization. The SDK does not automatically reconnect or replay actions.
+
+```python
+api = KingAI(owner_id="my-agent-registration")
+```

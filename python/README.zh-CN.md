@@ -2,7 +2,7 @@
 
 [English](README.md) | 简体中文 | [Project / 项目](../README.md)
 
-**SDK 0.3.4 · MIT · Python 3.10+**
+**SDK 0.3.5 · MIT · Python 3.10+**
 
 **首次使用请先看：[launch、KingAI、BrowserAutomation 详细区别与用法](ENTRY_POINTS.zh-CN.md)**，包含入口选择、完整示例、DOM/状态区别和连接/窗口生命周期速查。[English](ENTRY_POINTS.md)。
 
@@ -71,7 +71,7 @@ python -m pip install --cache-dir D:/code/kingai-sdk-cache/pip ./python
 $env:KINGAI_MCP_EXECUTABLE = 'D:\Apps\KingAIBrowser\KingAIMcpServer.exe'
 ```
 
-示例路径需替换。定位顺序为显式 SDK 参数、环境变量、管理器登记。不能把浏览器主程序当 MCP。Python SDK 0.3.4 已[发布到 PyPI](https://pypi.org/project/kingai-browser/0.3.4/)，可执行 `python -m pip install kingai-browser`。
+示例路径需替换。定位顺序为显式 SDK 参数、环境变量、管理器登记。不能把浏览器主程序当 MCP。Python SDK 0.3.5 已[发布到 PyPI](https://pypi.org/project/kingai-browser/0.3.5/)，可执行 `python -m pip install kingai-browser`。
 
 ## 从完整示例开始
 
@@ -142,3 +142,11 @@ Every installed tool is available through generic `call` / `Call`; convenience m
 [SAMPLES.md](../SAMPLES.md) records earlier fixture tests. New examples, documentation and renames have not been built, checked or tested in this task. / 旧模拟测试不代表新增示例已实机验证；本轮未运行构建、检查或测试。
 
 MIT: retain copyright/license and applicable third-party notices. / 允许传播、修改与商用，保留版权、许可及适用的第三方声明。
+
+## 稳定任务归属标识
+
+可选的稳定标识用于同一注册下的跨进程任务恢复，不是密码或访问凭据。独立注册使用不同标识；同一标识的进程有意共享逻辑 owner。不配置时仍使用随机进程归属。任务恢复还需要原生 MCP/Runtime 支持和当前环境授权，SDK 不会自动重连或重放操作。
+
+```python
+api = KingAI(owner_id="my-agent-registration")
+```
