@@ -15,7 +15,7 @@ KingAI Browser is an **anti-detect browser for AI agents and multi-account autom
 
 For developers looking for a Playwright alternative for logged-in automation, KingAI provides high-level tools over stdio MCP, without a Playwright dependency or a public raw CDP endpoint. This is a different API, not a drop-in Playwright replacement.
 
-**Built on Chromium 155 (155.0.8059.40).** KingAI is an antidetect / stealth browser for persistent, isolated account environments. Potential workflows include authorized e-commerce account operations and logged-in Agent tasks. Here, stealth describes fingerprint and automation-signal protections; it is not an undetected guarantee. Playwright and Puppeteer users should note that KingAI uses its own MCP/SDK API.
+**Built on Chromium 158 (158.0.8127.37).** KingAI is an antidetect / stealth browser for persistent, isolated account environments. Potential workflows include authorized e-commerce account operations and logged-in Agent tasks. Here, stealth describes fingerprint and automation-signal protections; it is not an undetected guarantee. Playwright and Puppeteer users should note that KingAI uses its own MCP/SDK API.
 
 **Python 0.3.5 · Node.js 0.3.2 · MIT SDKs · No HTTP service required**
 
